@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.MainController">
+    <!-- Menú Lateral -->
+    <left>
+        <VBox spacing="10.0" styleClass="sidebar" prefWidth="200.0">
+            <Label styleClass="sidebar-title" text="FINANZAS" />
+            
+            <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Inicio" />
+            <Button fx:id="btnGastos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Gastos Diarios" />
+            <Button fx:id="btnIngresos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Ingresos" />
+            <Button fx:id="btnGastosFijos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Gastos Fijos" />
+            <Button fx:id="btnPresupuestos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Presupuestos" />
+            <Button fx:id="btnReportes" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Reportes" />
+            <Button fx:id="btnEstadisticas" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Estadísticas" />
+            <Button fx:id="btnConfiguracion" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Configuración" />
+        </VBox>
+    </left>
+    
+    <!-- Contenido Dinámico -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area" BorderPane.alignment="CENTER" />
+    </center>
+</BorderPane>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.ConfiguracionController">
+    <Label styleClass="view-title" text="Configuración del Sistema" />
+
+    <!-- Sección Preferencias Visuales -->
+    <VBox spacing="15.0" styleClass="card-balance" style="-fx-max-width: 600px;">
+        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Tema Visual" />
+        
+        <GridPane vgap="12.0" hgap="15.0">
+            <columnConstraints>
+                <javafx.scene.layout.ColumnConstraints minWidth="150" />
+            </columnConstraints>
+            
+            <Label text="Seleccionar Tema:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+            <ComboBox fx:id="cbTema" onAction="#handleCambiarTema" prefWidth="200.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+        </GridPane>
+    </VBox>
+
+    <!-- Sección Copias de Seguridad y Datos -->
+    <VBox spacing="15.0" styleClass="card-balance" style="-fx-max-width: 600px;">
+        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Copias de Seguridad (Backup)" />
+        <Label style="-fx-text-fill: #718096; -fx-font-size: 12px;" 
+               text="Nota: Se realiza un respaldo automático en la carpeta 'backups' cada vez que se inicia la aplicación." />
+        
+        <HBox spacing="15.0">
+            <Button mnemonicParsing="false" onAction="#handleExportarBaseDatos" styleClass="btn-primary" text="Exportar Datos (Respaldar)" />
+            <Button mnemonicParsing="false" onAction="#handleImportarBaseDatos" styleClass="btn-secondary" text="Importar Datos (Restaurar)" />
+        </HBox>
+
+        <Separator prefWidth="200.0" style="-fx-padding: 10 0;" />
+
+        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e53e3e;" text="Zona Peligrosa" />
+        <Label style="-fx-text-fill: #718096; -fx-font-size: 12px;" 
+               text="Esta acción eliminará de forma permanente todos los registros de ingresos, gastos diarios, gastos fijos y presupuestos." />
+        
+        <HBox>
+            <Button mnemonicParsing="false" onAction="#handleRestablecerBaseDatos" styleClass="btn-danger" text="Restablecer Aplicación (Borrar Todo)" />
+        </HBox>
+    </VBox>
+</VBox>

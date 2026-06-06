@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.GastosController">
+    <Label styleClass="view-title" text="Registro de Gastos Diarios" />
+
+    <!-- Panel de Totales Resumidos -->
+    <HBox spacing="15.0">
+        <VBox styleClass="card-balance" prefWidth="180.0">
+            <Label styleClass="card-title" text="TOTAL HOY" />
+            <Label fx:id="lblTotalHoy" styleClass="card-value, value-gasto" text="$0.00" />
+        </VBox>
+        <VBox styleClass="card-balance" prefWidth="180.0">
+            <Label styleClass="card-title" text="TOTAL ESTA SEMANA" />
+            <Label fx:id="lblTotalSemana" styleClass="card-value, value-gasto" text="$0.00" />
+        </VBox>
+        <VBox styleClass="card-balance" prefWidth="180.0">
+            <Label styleClass="card-title" text="TOTAL ESTE MES" />
+            <Label fx:id="lblTotalMes" styleClass="card-value, value-gasto" text="$0.00" />
+        </VBox>
+        <VBox styleClass="card-balance" prefWidth="180.0">
+            <Label styleClass="card-title" text="TOTAL ESTE AÑO" />
+            <Label fx:id="lblTotalAnio" styleClass="card-value, value-gasto" text="$0.00" />
+        </VBox>
+    </HBox>
+
+    <SplitPane dividerPositions="0.35" style="-fx-background-color: transparent; -fx-box-border: transparent;" VBox.vgrow="ALWAYS">
+        <!-- Formulario (Izquierda) -->
+        <VBox spacing="15.0" styleClass="card-balance" style="-fx-pref-width: 320px;">
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Datos del Gasto" />
+            
+            <GridPane vgap="12.0" hgap="10.0">
+                <columnConstraints>
+                    <javafx.scene.layout.ColumnConstraints minWidth="100" />
+                </columnConstraints>
+                
+                <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <DatePicker fx:id="dpFecha" prefWidth="200.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                
+                <Label text="Descripción:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <TextField fx:id="txtDescripcion" prefWidth="200.0" promptText="Ej: Compra de almuerzo" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                
+                <Label text="Categoría:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                <ComboBox fx:id="cbCategoria" prefWidth="200.0" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                
+                <Label text="Valor:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                <TextField fx:id="txtValor" prefWidth="200.0" promptText="0.00" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                
+                <Label text="Observación:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                <TextField fx:id="txtObservacion" prefWidth="200.0" promptText="Detalles adicionales" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+            </GridPane>
+            
+            <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#handleLimpiar" styleClass="btn-secondary" text="Limpiar" />
+                <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#handleGuardar" styleClass="btn-primary" text="Guardar" />
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#handleEliminar" styleClass="btn-danger" text="Eliminar" visible="false" />
+            </HBox>
+        </VBox>
+
+        <!-- Tabla y Filtros (Derecha) -->
+        <VBox spacing="10.0" style="-fx-padding: 0 0 0 15;">
+            <!-- Controles de Filtros -->
+            <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card-balance" style="-fx-pref-height: 60px; -fx-padding: 10;">
+                <Label text="Buscar:" />
+                <TextField fx:id="txtBuscar" promptText="Buscar por descripción..." prefWidth="150.0" />
+                
+                <Label text="Categoría:" />
+                <ComboBox fx:id="cbFiltroCategoria" prefWidth="120.0" />
+                
+                <Label text="Desde:" />
+                <DatePicker fx:id="dpFiltroDesde" prefWidth="110.0" />
+                
+                <Label text="Hasta:" />
+                <DatePicker fx:id="dpFiltroHasta" prefWidth="110.0" />
+                
+                <Button mnemonicParsing="false" onAction="#applyFilters" styleClass="btn-primary" text="Filtrar" />
+                <Button mnemonicParsing="false" onAction="#resetFilters" styleClass="btn-secondary" text="Reset" />
+            </HBox>
+            
+            <!-- Tabla de Gastos -->
+            <TableView fx:id="tblGastos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                    <TableColumn fx:id="colFecha" prefWidth="100.0" text="Fecha" />
+                    <TableColumn fx:id="colDescripcion" prefWidth="180.0" text="Descripción" />
+                    <TableColumn fx:id="colCategoria" prefWidth="120.0" text="Categoría" />
+                    <TableColumn fx:id="colValor" prefWidth="110.0" text="Valor" />
+                    <TableColumn fx:id="colObservacion" prefWidth="150.0" text="Observación" />
+                </columns>
+            </TableView>
+        </VBox>
+    </SplitPane>
+</VBox>

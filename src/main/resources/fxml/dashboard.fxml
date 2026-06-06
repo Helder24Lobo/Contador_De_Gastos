@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.DashboardController">
+    <VBox spacing="20.0" styleClass="content-area">
+        <Label styleClass="view-title" text="Resumen Financiero del Mes" />
+        
+        <!-- Grid de Tarjetas de Balance -->
+        <GridPane hgap="15.0" vgap="10.0">
+            <VBox styleClass="card-balance" GridPane.columnIndex="0">
+                <Label styleClass="card-title" text="INGRESOS DEL MES" />
+                <Label fx:id="lblIngresos" styleClass="card-value, value-ingreso" text="$0.00" />
+            </VBox>
+            
+            <VBox styleClass="card-balance" GridPane.columnIndex="1">
+                <Label styleClass="card-title" text="GASTOS DIARIOS DEL MES" />
+                <Label fx:id="lblGastos" styleClass="card-value, value-gasto" text="$0.00" />
+            </VBox>
+            
+            <VBox styleClass="card-balance" GridPane.columnIndex="2">
+                <Label styleClass="card-title" text="GASTOS FIJOS DEL MES" />
+                <Label fx:id="lblGastosFijos" styleClass="card-value, value-fijo" text="$0.00" />
+            </VBox>
+            
+            <VBox styleClass="card-balance" GridPane.columnIndex="3">
+                <Label styleClass="card-title" text="BALANCE NETO" />
+                <Label fx:id="lblBalance" styleClass="card-value, value-balance" text="$0.00" />
+            </VBox>
+        </GridPane>
+
+        <!-- Estadísticas Rápidas -->
+        <HBox spacing="10.0">
+            <Label style="-fx-font-weight: bold;" text="Movimientos registrados este mes: " />
+            <Label fx:id="lblMovimientosCount" text="0" />
+        </HBox>
+
+        <!-- Contenedor de Alertas de Presupuesto -->
+        <VBox fx:id="vboxAlertas" spacing="8.0">
+            <!-- Se poblará dinámicamente desde el controlador -->
+        </VBox>
+        
+        <!-- Gráficas y Resumen de Categorías -->
+        <HBox spacing="20.0">
+            <VBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS" styleClass="card-balance" prefHeight="350.0">
+                <Label styleClass="card-title" text="DISTRIBUCIÓN DE GASTOS" />
+                <PieChart fx:id="chartGastos" prefHeight="300.0" />
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.ReportesController">
+    <Label styleClass="view-title" text="Generador de Reportes" />
+
+    <VBox spacing="15.0" styleClass="card-balance" style="-fx-max-width: 600px; -fx-padding: 25px;">
+        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Parámetros del Reporte" />
+        
+        <GridPane vgap="15.0" hgap="15.0">
+            <columnConstraints>
+                <javafx.scene.layout.ColumnConstraints minWidth="150" />
+            </columnConstraints>
+            
+            <Label text="Selección Rápida:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+            <ComboBox fx:id="cbRangoRapido" onAction="#handleRangoRapido" prefWidth="250.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+            
+            <Label text="Fecha Inicial (Desde):" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+            <DatePicker fx:id="dpDesde" prefWidth="250.0" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+            
+            <Label text="Fecha Final (Hasta):" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+            <DatePicker fx:id="dpHasta" prefWidth="250.0" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+        </GridPane>
+
+        <Label style="-fx-text-fill: #718096; -fx-font-size: 12px; -fx-padding: 10 0 0 0;" 
+               text="El reporte incluirá el balance neto, ingresos, gastos diarios y los gastos fijos activos asociados." />
+
+        <HBox spacing="15.0" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
+            <Button mnemonicParsing="false" onAction="#exportarExcel" styleClass="btn-secondary" text="Exportar a Excel (.xlsx)" />
+            <Button mnemonicParsing="false" onAction="#exportarPDF" styleClass="btn-primary" text="Exportar a PDF (.pdf)" />
+        </HBox>
+    </VBox>
+</VBox>
