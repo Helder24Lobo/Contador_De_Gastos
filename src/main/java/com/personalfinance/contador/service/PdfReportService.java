@@ -2,7 +2,6 @@ package com.personalfinance.contador.service;
 
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -11,7 +10,7 @@ import com.personalfinance.contador.model.GastoFijo;
 import com.personalfinance.contador.model.Ingreso;
 import com.personalfinance.contador.model.Presupuesto;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -32,9 +31,9 @@ public class PdfReportService {
     private static final Color COLOR_TEXT_MUTED = new Color(108, 117, 125); // #6c757d
 
     public static void generateFinancialReport(String filePath, String title, LocalDate start, LocalDate end,
-                                                List<Ingreso> ingresos, List<Gasto> gastos,
-                                                List<GastoFijo> gastosFijos, List<Presupuesto> presupuestos) throws IOException, DocumentException {
-        
+                                               List<Ingreso> ingresos, List<Gasto> gastos,
+                                               List<GastoFijo> gastosFijos, List<Presupuesto> presupuestos) throws IOException, DocumentException {
+
         Document document = new Document(PageSize.A4, 36, 36, 54, 54);
         PdfWriter.getInstance(document, new FileOutputStream(filePath));
         document.open();
@@ -47,7 +46,7 @@ public class PdfReportService {
         document.add(titleParagraph);
 
         Font fontSubtitle = FontFactory.getFont(FontFactory.HELVETICA, 10, COLOR_TEXT_MUTED);
-        Paragraph subtitleParagraph = new Paragraph("Rango de fechas: " + start.format(DATE_FORMAT) + " al " + end.format(DATE_FORMAT) + 
+        Paragraph subtitleParagraph = new Paragraph("Rango de fechas: " + start.format(DATE_FORMAT) + " al " + end.format(DATE_FORMAT) +
                 " | Generado el: " + LocalDate.now().format(DATE_FORMAT), fontSubtitle);
         subtitleParagraph.setAlignment(Element.ALIGN_CENTER);
         subtitleParagraph.setSpacingAfter(25);
@@ -76,14 +75,14 @@ public class PdfReportService {
         // 3. Detalle de Ingresos
         document.add(new Paragraph("INGRESOS REGISTRADOS", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, COLOR_PRIMARY)));
         document.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 5)));
-        
+
         if (ingresos.isEmpty()) {
             document.add(new Paragraph("No se registraron ingresos en este período.", FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10)));
         } else {
             PdfPTable tableIngresos = new PdfPTable(new float[]{1.5f, 4f, 2f, 2.5f});
             tableIngresos.setWidthPercentage(100);
             tableIngresos.setSpacingAfter(20);
-            
+
             addTableHeader(tableIngresos, new String[]{"Fecha", "Descripción", "Tipo", "Valor"});
             for (Ingreso i : ingresos) {
                 tableIngresos.addCell(createCell(i.getFecha().format(DATE_FORMAT), Element.ALIGN_CENTER));
@@ -97,14 +96,14 @@ public class PdfReportService {
         // 4. Detalle de Gastos
         document.add(new Paragraph("GASTOS REGISTRADOS", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, COLOR_PRIMARY)));
         document.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 5)));
-        
+
         if (gastos.isEmpty()) {
             document.add(new Paragraph("No se registraron gastos en este período.", FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10)));
         } else {
             PdfPTable tableGastos = new PdfPTable(new float[]{1.5f, 3f, 2.5f, 2f, 3f});
             tableGastos.setWidthPercentage(100);
             tableGastos.setSpacingAfter(20);
-            
+
             addTableHeader(tableGastos, new String[]{"Fecha", "Descripción", "Categoría", "Valor", "Observación"});
             for (Gasto g : gastos) {
                 tableGastos.addCell(createCell(g.getFecha().format(DATE_FORMAT), Element.ALIGN_CENTER));
@@ -119,14 +118,14 @@ public class PdfReportService {
         // 5. Gastos Fijos
         document.add(new Paragraph("GASTOS FIJOS DEL MES", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, COLOR_PRIMARY)));
         document.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 5)));
-        
+
         if (gastosFijos.isEmpty()) {
             document.add(new Paragraph("No se configuraron gastos fijos para este mes.", FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10)));
         } else {
             PdfPTable tableFijos = new PdfPTable(new float[]{4f, 2.5f, 1.5f, 2f});
             tableFijos.setWidthPercentage(100);
             tableFijos.setSpacingAfter(20);
-            
+
             addTableHeader(tableFijos, new String[]{"Nombre del Servicio", "Valor Mensual", "Día de Cobro", "Estado"});
             for (GastoFijo gf : gastosFijos) {
                 tableFijos.addCell(createCell(gf.getNombre(), Element.ALIGN_LEFT));
