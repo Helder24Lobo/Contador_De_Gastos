@@ -16,22 +16,22 @@
         <GridPane hgap="15.0" vgap="10.0">
             <VBox styleClass="card-balance" GridPane.columnIndex="0">
                 <Label styleClass="card-title" text="INGRESOS DEL MES" />
-                <Label fx:id="lblIngresos" styleClass="card-value, value-ingreso" text="$0.00" />
+                <Label fx:id="lblIngresos" styleClass="card-value, value-ingreso" text="\$0.00" />
             </VBox>
             
             <VBox styleClass="card-balance" GridPane.columnIndex="1">
                 <Label styleClass="card-title" text="GASTOS DIARIOS DEL MES" />
-                <Label fx:id="lblGastos" styleClass="card-value, value-gasto" text="$0.00" />
+                <Label fx:id="lblGastos" styleClass="card-value, value-gasto" text="\$0.00" />
             </VBox>
             
             <VBox styleClass="card-balance" GridPane.columnIndex="2">
                 <Label styleClass="card-title" text="GASTOS FIJOS DEL MES" />
-                <Label fx:id="lblGastosFijos" styleClass="card-value, value-fijo" text="$0.00" />
+                <Label fx:id="lblGastosFijos" styleClass="card-value, value-fijo" text="\$0.00" />
             </VBox>
             
             <VBox styleClass="card-balance" GridPane.columnIndex="3">
                 <Label styleClass="card-title" text="BALANCE NETO" />
-                <Label fx:id="lblBalance" styleClass="card-value, value-balance" text="$0.00" />
+                <Label fx:id="lblBalance" styleClass="card-value, value-balance" text="\$0.00" />
             </VBox>
         </GridPane>
 

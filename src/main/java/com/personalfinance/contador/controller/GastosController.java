@@ -64,8 +64,9 @@ public class GastosController implements Initializable {
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
     private final String[] categorias = {
-            "Alimentación", "Transporte", "Servicios", "Salud", "Educación", 
-            "Tecnología", "Entretenimiento", "Hogar", "Otros"
+            "Arriendo", "Servicios", "Mercado", "Cuota celular", "Parqueadero", 
+            "Gym", "Aceite moto", "Corte de cabello", "Plan", "Gasolina", 
+            "Spotify", "Internet", "Otros"
     };
 
     @Override

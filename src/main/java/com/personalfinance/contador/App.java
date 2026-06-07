@@ -1,6 +1,5 @@
 package com.personalfinance.contador;
 
-import com.personalfinance.contador.controller.MainController;
 import com.personalfinance.contador.service.BackupService;
 import com.personalfinance.contador.util.ConfigManager;
 import com.personalfinance.contador.util.DatabaseHelper;
@@ -20,7 +19,7 @@ public class App extends Application {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             System.err.println("Excepción no capturada en hilo " + thread.getName() + ": " + throwable.getMessage());
             throwable.printStackTrace();
-            
+
             // Mostrar diálogo al usuario si es posible
             javafx.application.Platform.runLater(() -> {
                 Alert alert = new Alert(AlertType.ERROR);
@@ -41,9 +40,9 @@ public class App extends Application {
             // 3. Cargar Vista Principal FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
             Parent root = loader.load();
-            
+
             Scene scene = new Scene(root);
-            
+
             // 4. Aplicar Tema Persistido (Claro u Oscuro)
             String theme = ConfigManager.getTheme();
             String stylesheetPath = getClass().getResource("/css/" + theme.toLowerCase() + ".css").toExternalForm();

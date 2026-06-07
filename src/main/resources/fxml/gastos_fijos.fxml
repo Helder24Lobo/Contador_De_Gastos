@@ -18,7 +18,7 @@
     <HBox spacing="15.0">
         <VBox styleClass="card-balance" prefWidth="250.0">
             <Label styleClass="card-title" text="TOTAL GASTOS FIJOS DEL MES" />
-            <Label fx:id="lblTotalFijos" styleClass="card-value, value-fijo" text="$0.00" />
+            <Label fx:id="lblTotalFijos" styleClass="card-value, value-fijo" text="\$0.00" />
         </VBox>
         <VBox styleClass="card-balance" prefWidth="250.0">
             <Label styleClass="card-title" text="PORCENTAJE RESPECTO A INGRESOS" />

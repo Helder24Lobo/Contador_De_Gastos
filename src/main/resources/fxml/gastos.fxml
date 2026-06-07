@@ -20,19 +20,19 @@
     <HBox spacing="15.0">
         <VBox styleClass="card-balance" prefWidth="180.0">
             <Label styleClass="card-title" text="TOTAL HOY" />
-            <Label fx:id="lblTotalHoy" styleClass="card-value, value-gasto" text="$0.00" />
+            <Label fx:id="lblTotalHoy" styleClass="card-value, value-gasto" text="\$0.00" />
         </VBox>
         <VBox styleClass="card-balance" prefWidth="180.0">
             <Label styleClass="card-title" text="TOTAL ESTA SEMANA" />
-            <Label fx:id="lblTotalSemana" styleClass="card-value, value-gasto" text="$0.00" />
+            <Label fx:id="lblTotalSemana" styleClass="card-value, value-gasto" text="\$0.00" />
         </VBox>
         <VBox styleClass="card-balance" prefWidth="180.0">
             <Label styleClass="card-title" text="TOTAL ESTE MES" />
-            <Label fx:id="lblTotalMes" styleClass="card-value, value-gasto" text="$0.00" />
+            <Label fx:id="lblTotalMes" styleClass="card-value, value-gasto" text="\$0.00" />
         </VBox>
         <VBox styleClass="card-balance" prefWidth="180.0">
             <Label styleClass="card-title" text="TOTAL ESTE AÑO" />
-            <Label fx:id="lblTotalAnio" styleClass="card-value, value-gasto" text="$0.00" />
+            <Label fx:id="lblTotalAnio" styleClass="card-value, value-gasto" text="\$0.00" />
         </VBox>
     </HBox>
 
@@ -74,22 +74,31 @@
         <!-- Tabla y Filtros (Derecha) -->
         <VBox spacing="10.0" style="-fx-padding: 0 0 0 15;">
             <!-- Controles de Filtros -->
-            <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card-balance" style="-fx-pref-height: 60px; -fx-padding: 10;">
-                <Label text="Buscar:" />
-                <TextField fx:id="txtBuscar" promptText="Buscar por descripción..." prefWidth="150.0" />
+            <GridPane hgap="10.0" vgap="8.0" styleClass="card-balance" style="-fx-padding: 10;">
+                <columnConstraints>
+                    <javafx.scene.layout.ColumnConstraints hgrow="NEVER" />
+                    <javafx.scene.layout.ColumnConstraints hgrow="ALWAYS" minWidth="120.0" />
+                    <javafx.scene.layout.ColumnConstraints hgrow="NEVER" />
+                    <javafx.scene.layout.ColumnConstraints hgrow="ALWAYS" minWidth="120.0" />
+                    <javafx.scene.layout.ColumnConstraints hgrow="NEVER" />
+                </columnConstraints>
                 
-                <Label text="Categoría:" />
-                <ComboBox fx:id="cbFiltroCategoria" prefWidth="120.0" />
+                <Label text="Buscar:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <TextField fx:id="txtBuscar" promptText="Buscar por descripción..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
                 
-                <Label text="Desde:" />
-                <DatePicker fx:id="dpFiltroDesde" prefWidth="110.0" />
+                <Label text="Categoría:" GridPane.rowIndex="0" GridPane.columnIndex="2" />
+                <ComboBox fx:id="cbFiltroCategoria" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="3" />
                 
-                <Label text="Hasta:" />
-                <DatePicker fx:id="dpFiltroHasta" prefWidth="110.0" />
+                <Button mnemonicParsing="false" onAction="#applyFilters" prefWidth="80.0" styleClass="btn-primary" text="Filtrar" GridPane.rowIndex="0" GridPane.columnIndex="4" />
                 
-                <Button mnemonicParsing="false" onAction="#applyFilters" styleClass="btn-primary" text="Filtrar" />
-                <Button mnemonicParsing="false" onAction="#resetFilters" styleClass="btn-secondary" text="Reset" />
-            </HBox>
+                <Label text="Desde:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <DatePicker fx:id="dpFiltroDesde" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                
+                <Label text="Hasta:" GridPane.rowIndex="1" GridPane.columnIndex="2" />
+                <DatePicker fx:id="dpFiltroHasta" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="3" />
+                
+                <Button mnemonicParsing="false" onAction="#resetFilters" prefWidth="80.0" styleClass="btn-secondary" text="Reset" GridPane.rowIndex="1" GridPane.columnIndex="4" />
+            </GridPane>
             
             <!-- Tabla de Gastos -->
             <TableView fx:id="tblGastos" VBox.vgrow="ALWAYS">

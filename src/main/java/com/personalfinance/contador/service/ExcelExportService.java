@@ -22,9 +22,10 @@ public class ExcelExportService {
             CellStyle currencyStyle = createCurrencyStyle(workbook);
             CellStyle dateStyle = createDateStyle(workbook);
             CellStyle boldStyle = createBoldStyle(workbook);
+            CellStyle boldCurrencyStyle = createBoldCurrencyStyle(workbook);
 
             // 2. Creación de la pestaña "Resumen"
-            createResumenSheet(workbook, start, end, ingresos, gastos, gastosFijos, currencyStyle, boldStyle, dateStyle);
+            createResumenSheet(workbook, start, end, ingresos, gastos, gastosFijos, currencyStyle, boldStyle, dateStyle, boldCurrencyStyle);
 
             // 3. Creación de la pestaña "Ingresos"
             createIngresosSheet(workbook, ingresos, headerStyle, dateStyle, currencyStyle);
@@ -90,6 +91,20 @@ public class ExcelExportService {
         return style;
     }
 
+    private static CellStyle createBoldCurrencyStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        DataFormat format = workbook.createDataFormat();
+        style.setDataFormat(format.getFormat("$#,##0.00"));
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        Font font = workbook.createFont();
+        font.setBold(true);
+        style.setFont(font);
+        return style;
+    }
+
     private static CellStyle createDefaultBorderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         style.setBorderBottom(BorderStyle.THIN);
@@ -101,7 +116,7 @@ public class ExcelExportService {
 
     private static void createResumenSheet(Workbook workbook, LocalDate start, LocalDate end,
                                            List<Ingreso> ingresos, List<Gasto> gastos, List<GastoFijo> gastosFijos,
-                                           CellStyle currencyStyle, CellStyle boldStyle, CellStyle dateStyle) {
+                                           CellStyle currencyStyle, CellStyle boldStyle, CellStyle dateStyle, CellStyle boldCurrencyStyle) {
         Sheet sheet = workbook.createSheet("Resumen");
         sheet.setColumnWidth(0, 6000);
         sheet.setColumnWidth(1, 6000);
@@ -160,8 +175,7 @@ public class ExcelExportService {
         lblBal.setCellStyle(boldStyle);
         Cell cBal = rBal.createCell(1);
         cBal.setCellValue(balanceNeto);
-        cBal.setCellStyle(currencyStyle);
-        cBal.setCellStyle(boldStyle);
+        cBal.setCellStyle(boldCurrencyStyle);
     }
 
     private static void createIngresosSheet(Workbook workbook, List<Ingreso> ingresos,

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS gastos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fecha TEXT NOT NULL,         -- Formato ISO-8601 (YYYY-MM-DD)
     descripcion TEXT NOT NULL,
-    categoria TEXT NOT NULL,     -- 'Alimentación', 'Transporte', 'Servicios', 'Salud', 'Educación', 'Tecnología', 'Entretenimiento', 'Hogar', 'Otros'
+    categoria TEXT NOT NULL,     -- 'Arriendo', 'Servicios', 'Mercado', 'Cuota celular', 'Parqueadero', 'Gym', 'Aceite moto', 'Corte de cabello', 'Plan', 'Gasolina', 'Spotify', 'Internet', 'Otros'
     valor REAL NOT NULL CHECK (valor >= 0),
     observacion TEXT
 );
