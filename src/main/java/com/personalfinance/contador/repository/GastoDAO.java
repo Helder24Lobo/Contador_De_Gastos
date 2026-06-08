@@ -1,6 +1,6 @@
 package com.personalfinance.contador.repository;
 
-import com.personalfinance.contador.model.Gasto;
+import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.util.DatabaseHelper;
 
 import java.sql.*;
@@ -12,35 +12,35 @@ import java.util.Map;
 
 public class GastoDAO {
 
-    public void insert(Gasto gasto) throws SQLException {
+    public void insert(Expenditure expense) throws SQLException {
         String sql = "INSERT INTO gastos (fecha, descripcion, categoria, valor, observacion) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, gasto.getFecha().toString());
-            pstmt.setString(2, gasto.getDescripcion());
-            pstmt.setString(3, gasto.getCategoria());
-            pstmt.setDouble(4, gasto.getValor());
-            pstmt.setString(5, gasto.getObservacion());
+            pstmt.setString(1, expense.getFecha().toString());
+            pstmt.setString(2, expense.getDescripcion());
+            pstmt.setString(3, expense.getCategoria());
+            pstmt.setDouble(4, expense.getValor());
+            pstmt.setString(5, expense.getObservacion());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    gasto.setId(generatedKeys.getInt(1));
+                    expense.setId(generatedKeys.getInt(1));
                 }
             }
         }
     }
 
-    public void update(Gasto gasto) throws SQLException {
+    public void update(Expenditure expense) throws SQLException {
         String sql = "UPDATE gastos SET fecha = ?, descripcion = ?, categoria = ?, valor = ?, observacion = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, gasto.getFecha().toString());
-            pstmt.setString(2, gasto.getDescripcion());
-            pstmt.setString(3, gasto.getCategoria());
-            pstmt.setDouble(4, gasto.getValor());
-            pstmt.setString(5, gasto.getObservacion());
-            pstmt.setInt(6, gasto.getId());
+            pstmt.setString(1, expense.getFecha().toString());
+            pstmt.setString(2, expense.getDescripcion());
+            pstmt.setString(3, expense.getCategoria());
+            pstmt.setDouble(4, expense.getValor());
+            pstmt.setString(5, expense.getObservacion());
+            pstmt.setInt(6, expense.getId());
             pstmt.executeUpdate();
         }
     }
@@ -54,7 +54,7 @@ public class GastoDAO {
         }
     }
 
-    public Gasto findById(int id) throws SQLException {
+    public Expenditure findById(int id) throws SQLException {
         String sql = "SELECT * FROM gastos WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,9 +68,9 @@ public class GastoDAO {
         return null;
     }
 
-    public List<Gasto> findAll() throws SQLException {
+    public List<Expenditure> findAll() throws SQLException {
         String sql = "SELECT * FROM gastos ORDER BY fecha DESC, id DESC";
-        List<Gasto> list = new ArrayList<>();
+        List<Expenditure> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -81,7 +81,7 @@ public class GastoDAO {
         return list;
     }
 
-    public List<Gasto> findByFilters(LocalDate start, LocalDate end, String categoria, String search) throws SQLException {
+    public List<Expenditure> findByFilters(LocalDate start, LocalDate end, String category, String search) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM gastos WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
@@ -93,9 +93,9 @@ public class GastoDAO {
             sql.append(" AND fecha <= ?");
             params.add(end.toString());
         }
-        if (categoria != null && !categoria.equalsIgnoreCase("Todas") && !categoria.trim().isEmpty()) {
+        if (category != null && !category.equalsIgnoreCase("Todas") && !category.trim().isEmpty()) {
             sql.append(" AND categoria = ?");
-            params.add(categoria);
+            params.add(category);
         }
         if (search != null && !search.trim().isEmpty()) {
             sql.append(" AND (descripcion LIKE ? OR observacion LIKE ?)");
@@ -106,7 +106,7 @@ public class GastoDAO {
 
         sql.append(" ORDER BY fecha DESC, id DESC");
 
-        List<Gasto> list = new ArrayList<>();
+        List<Expenditure> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -160,8 +160,8 @@ public class GastoDAO {
         }
     }
 
-    private Gasto mapResultSetToGasto(ResultSet rs) throws SQLException {
-        return new Gasto(
+    private Expenditure mapResultSetToGasto(ResultSet rs) throws SQLException {
+        return new Expenditure(
                 rs.getInt("id"),
                 LocalDate.parse(rs.getString("fecha")),
                 rs.getString("descripcion"),

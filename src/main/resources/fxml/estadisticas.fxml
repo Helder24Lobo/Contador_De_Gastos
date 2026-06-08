@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.personalfinance.contador.controller.EstadisticasController">
+            fx:controller="com.personalfinance.contador.controller.StatisticsController">
     <VBox spacing="20.0" styleClass="content-area">
         <Label styleClass="view-title" text="Estadísticas y Tendencias"/>
 

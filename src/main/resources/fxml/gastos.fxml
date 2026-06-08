@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox spacing="15.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.personalfinance.contador.controller.GastosController">
+      fx:controller="com.personalfinance.contador.controller.ExpensesController">
     <Label styleClass="view-title" text="Registro de Gastos Diarios"/>
 
     <!-- Panel de Totales Resumidos -->

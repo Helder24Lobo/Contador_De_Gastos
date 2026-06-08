@@ -15,15 +15,24 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    @FXML private Button btnDashboard;
-    @FXML private Button btnGastos;
-    @FXML private Button btnIngresos;
-    @FXML private Button btnGastosFijos;
-    @FXML private Button btnPresupuestos;
-    @FXML private Button btnReportes;
-    @FXML private Button btnEstadisticas;
-    @FXML private Button btnConfiguracion;
-    @FXML private StackPane contentArea;
+    @FXML
+    private Button btnDashboard;
+    @FXML
+    private Button btnGastos;
+    @FXML
+    private Button btnIngresos;
+    @FXML
+    private Button btnGastosFijos;
+    @FXML
+    private Button btnPresupuestos;
+    @FXML
+    private Button btnReportes;
+    @FXML
+    private Button btnEstadisticas;
+    @FXML
+    private Button btnConfiguracion;
+    @FXML
+    private StackPane contentArea;
 
     private Button currentActiveButton;
 
@@ -59,10 +68,10 @@ public class MainController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/" + fxmlFile));
             Parent view = loader.load();
-            
+
             // Si navegamos a la vista de configuración, pasarle una referencia de MainController para poder alternar el tema visual
             if (fxmlFile.equals("configuracion.fxml")) {
-                ConfiguracionController configController = loader.getController();
+                ConfigurationController configController = loader.getController();
                 configController.setMainController(this);
             }
 

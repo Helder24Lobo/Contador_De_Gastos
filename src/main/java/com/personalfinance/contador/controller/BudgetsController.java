@@ -1,7 +1,6 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Presupuesto;
-import com.personalfinance.contador.repository.GastoDAO;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.PresupuestoDAO;
 import com.personalfinance.contador.service.BudgetService;
 import com.personalfinance.contador.service.BudgetService.BudgetReport;
@@ -26,42 +25,52 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class PresupuestosController implements Initializable {
+public class BudgetsController implements Initializable {
 
-    @FXML private ComboBox<String> cbCategoria;
-    @FXML private TextField txtValor;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnLimpiar;
+    @FXML
+    private ComboBox<String> cbCategoria;
+    @FXML
+    private TextField txtValor;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnLimpiar;
 
-    @FXML private TableView<Presupuesto> tblPresupuestos;
-    @FXML private TableColumn<Presupuesto, String> colCategoria;
-    @FXML private TableColumn<Presupuesto, Number> colPresupuesto;
-    @FXML private TableColumn<Presupuesto, Number> colGastado;
-    @FXML private TableColumn<Presupuesto, Void> colConsumo;
+    @FXML
+    private TableView<Specifications> tblPresupuestos;
+    @FXML
+    private TableColumn<Specifications, String> colCategoria;
+    @FXML
+    private TableColumn<Specifications, Number> colPresupuesto;
+    @FXML
+    private TableColumn<Specifications, Number> colGastado;
+    @FXML
+    private TableColumn<Specifications, Void> colConsumo;
 
     private final PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
     private final BudgetService budgetService = new BudgetService();
-    private final ObservableList<Presupuesto> presupuestosList = FXCollections.observableArrayList();
-    private Presupuesto selectedPresupuesto = null;
+    private final ObservableList<Specifications> budgetsList = FXCollections.observableArrayList();
+    private Specifications selectedBudget = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
-    private final String[] categorias = {
-            "Arriendo", "Servicios", "Mercado", "Cuota celular", "Parqueadero", 
-            "Gym", "Aceite moto", "Corte de cabello", "Plan", "Gasolina", 
+    private final String[] categories = {
+            "Arriendo", "Servicios", "Mercado", "Cuota celular", "Parqueadero",
+            "Gym", "Aceite moto", "Corte de cabello", "Plan", "Gasolina",
             "Spotify", "Internet", "Otros"
     };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cbCategoria.setItems(FXCollections.observableArrayList(categorias));
+        cbCategoria.setItems(FXCollections.observableArrayList(categories));
 
-        // Configurar Columnas
+        // Configure Columns
         colCategoria.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategoria()));
         colPresupuesto.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getValorPresupuestado()));
-        
-        // Columna Gastado calculada en tiempo real para el mes en curso
+
+        // Spent column calculated in real time for the current month
         colGastado.setCellValueFactory(cellData -> {
             try {
                 BudgetReport report = budgetService.getCategoryConsumption(cellData.getValue().getCategoria());
@@ -71,19 +80,19 @@ public class PresupuestosController implements Initializable {
             }
         });
 
-        // Formato Moneda
+        // Currency Format
         colPresupuesto.setCellFactory(column -> createCurrencyCell());
         colGastado.setCellFactory(column -> createCurrencyCell());
 
-        // Columna Consumo con Barra de Progreso y Porcentaje
-        colConsumo.setCellFactory(column -> new TableCell<Presupuesto, Void>() {
-            private final ProgressBar pb = new ProgressBar(0.0);
-            private final Label lblPorcentaje = new Label("0.0%");
-            private final HBox container = new HBox(8, pb, lblPorcentaje);
+        // Consumption Column with Progress Bar and Percentage
+        colConsumo.setCellFactory(column -> new TableCell<Specifications, Void>() {
+            private final ProgressBar progressBar = new ProgressBar(0.0);
+            private final Label lblPercentage = new Label("0.0%");
+            private final HBox container = new HBox(8, progressBar, lblPercentage);
 
             {
-                pb.setPrefWidth(120);
-                HBox.setHgrow(pb, Priority.ALWAYS);
+                progressBar.setPrefWidth(120);
+                HBox.setHgrow(progressBar, Priority.ALWAYS);
                 container.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             }
 
@@ -93,51 +102,51 @@ public class PresupuestosController implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    Presupuesto p = getTableView().getItems().get(getIndex());
+                    Specifications budget = getTableView().getItems().get(getIndex());
                     try {
-                        BudgetReport report = budgetService.getCategoryConsumption(p.getCategoria());
-                        double porcentaje = report.getPorcentajeConsumido();
-                        double progressFraction = porcentaje / 100.0;
+                        BudgetReport report = budgetService.getCategoryConsumption(budget.getCategoria());
+                        double percentage = report.getPorcentajeConsumido();
+                        double progressFraction = percentage / 100.0;
 
-                        pb.setProgress(progressFraction > 1.0 ? 1.0 : progressFraction);
-                        lblPorcentaje.setText(String.format("%.1f%%", porcentaje));
+                        progressBar.setProgress(progressFraction > 1.0 ? 1.0 : progressFraction);
+                        lblPercentage.setText(String.format("%.1f%%", percentage));
 
-                        // Cambiar color de la barra según porcentaje
-                        if (porcentaje >= 100.0) {
-                            pb.setStyle("-fx-accent: #e53e3e;"); // Rojo
-                            lblPorcentaje.setStyle("-fx-text-fill: #e53e3e; -fx-font-weight: bold;");
-                        } else if (porcentaje >= 80.0) {
-                            pb.setStyle("-fx-accent: #ecc94b;"); // Amarillo
-                            lblPorcentaje.setStyle("-fx-text-fill: #d69e2e; -fx-font-weight: bold;");
+                        // Change bar color based on percentage
+                        if (percentage >= 100.0) {
+                            progressBar.setStyle("-fx-accent: #e53e3e;"); // Red
+                            lblPercentage.setStyle("-fx-text-fill: #e53e3e; -fx-font-weight: bold;");
+                        } else if (percentage >= 80.0) {
+                            progressBar.setStyle("-fx-accent: #ecc94b;"); // Yellow
+                            lblPercentage.setStyle("-fx-text-fill: #d69e2e; -fx-font-weight: bold;");
                         } else {
-                            pb.setStyle("-fx-accent: #48bb78;"); // Verde
-                            lblPorcentaje.setStyle("-fx-text-fill: #38a169;");
+                            progressBar.setStyle("-fx-accent: #48bb78;"); // Green
+                            lblPercentage.setStyle("-fx-text-fill: #38a169;");
                         }
                     } catch (SQLException e) {
-                        pb.setProgress(0.0);
-                        lblPorcentaje.setText("0.0%");
+                        progressBar.setProgress(0.0);
+                        lblPercentage.setText("0.0%");
                     }
                     setGraphic(container);
                 }
             }
         });
 
-        // Evento selección tabla
+        // Table selection event
         tblPresupuestos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                selectedPresupuesto = newSelection;
-                populateForm(selectedPresupuesto);
+                selectedBudget = newSelection;
+                populateForm(selectedBudget);
             }
         });
 
-        loadPresupuestosData();
+        loadBudgetsData();
     }
 
-    private void loadPresupuestosData() {
+    private void loadBudgetsData() {
         try {
-            List<Presupuesto> all = presupuestoDAO.findAll();
-            presupuestosList.setAll(all);
-            tblPresupuestos.setItems(presupuestosList);
+            List<Specifications> all = presupuestoDAO.findAll();
+            budgetsList.setAll(all);
+            tblPresupuestos.setItems(budgetsList);
         } catch (SQLException e) {
             showErrorAlert("Error al cargar presupuestos", e.getMessage());
         }
@@ -149,14 +158,14 @@ public class PresupuestosController implements Initializable {
             return;
         }
 
-        String categoria = cbCategoria.getValue();
-        double valor = Double.parseDouble(txtValor.getText().trim());
+        String category = cbCategoria.getValue();
+        double amount = Double.parseDouble(txtValor.getText().trim());
 
         try {
-            Presupuesto pres = new Presupuesto(categoria, valor, LocalDate.now());
-            presupuestoDAO.save(pres);
+            Specifications budget = new Specifications(category, amount, LocalDate.now());
+            presupuestoDAO.save(budget);
 
-            loadPresupuestosData();
+            loadBudgetsData();
             handleLimpiar(null);
         } catch (SQLException e) {
             showErrorAlert("Error al guardar presupuesto", e.getMessage());
@@ -165,18 +174,18 @@ public class PresupuestosController implements Initializable {
 
     @FXML
     private void handleEliminar(ActionEvent event) {
-        if (selectedPresupuesto == null) return;
+        if (selectedBudget == null) return;
 
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de eliminar este presupuesto?");
-        alert.setContentText("Categoría: " + selectedPresupuesto.getCategoria() + "\nPresupuesto: " + currencyFormat.format(selectedPresupuesto.getValorPresupuestado()));
+        alert.setContentText("Categoría: " + selectedBudget.getCategoria() + "\nPresupuesto: " + currencyFormat.format(selectedBudget.getValorPresupuestado()));
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                presupuestoDAO.delete(selectedPresupuesto.getId());
-                loadPresupuestosData();
+                presupuestoDAO.delete(selectedBudget.getId());
+                loadBudgetsData();
                 handleLimpiar(null);
             } catch (SQLException e) {
                 showErrorAlert("Error al eliminar presupuesto", e.getMessage());
@@ -188,19 +197,19 @@ public class PresupuestosController implements Initializable {
     private void handleLimpiar(ActionEvent event) {
         cbCategoria.setValue(null);
         txtValor.clear();
-        selectedPresupuesto = null;
+        selectedBudget = null;
         btnEliminar.setVisible(false);
         tblPresupuestos.getSelectionModel().clearSelection();
     }
 
-    private void populateForm(Presupuesto p) {
-        cbCategoria.setValue(p.getCategoria());
-        txtValor.setText(String.valueOf(p.getValorPresupuestado()));
+    private void populateForm(Specifications budget) {
+        cbCategoria.setValue(budget.getCategoria());
+        txtValor.setText(String.valueOf(budget.getValorPresupuestado()));
         btnEliminar.setVisible(true);
     }
 
-    private TableCell<Presupuesto, Number> createCurrencyCell() {
-        return new TableCell<Presupuesto, Number>() {
+    private TableCell<Specifications, Number> createCurrencyCell() {
+        return new TableCell<Specifications, Number>() {
             @Override
             protected void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -219,8 +228,8 @@ public class PresupuestosController implements Initializable {
             return false;
         }
         try {
-            double valor = Double.parseDouble(txtValor.getText().trim());
-            if (valor < 0) {
+            double amount = Double.parseDouble(txtValor.getText().trim());
+            if (amount < 0) {
                 showWarningAlert("Formulario Inválido", "El valor del presupuesto no puede ser negativo.");
                 return false;
             }

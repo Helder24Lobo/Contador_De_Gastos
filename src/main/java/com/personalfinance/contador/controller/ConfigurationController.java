@@ -18,13 +18,13 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class ConfiguracionController implements Initializable {
+public class ConfigurationController implements Initializable {
 
-    @FXML private ComboBox<String> cbTema;
+    @FXML
+    private ComboBox<String> cbTema;
 
     private MainController mainController;
 
@@ -36,7 +36,7 @@ public class ConfiguracionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cbTema.setItems(FXCollections.observableArrayList("Oscuro", "Claro"));
-        
+
         String currentTheme = ConfigManager.getTheme();
         if (currentTheme.equalsIgnoreCase("light")) {
             cbTema.setValue("Claro");
@@ -101,7 +101,7 @@ public class ConfiguracionController implements Initializable {
                 try {
                     BackupService.importDatabase(file);
                     showSuccessAlert("Restauración Exitosa", "La base de datos se ha importado con éxito.\nSe recomienda recargar el sistema.");
-                    
+
                     // Recargar vista de configuración
                     if (mainController != null) {
                         mainController.navigateTo("dashboard.fxml", null); // Redirigir al inicio para refrescar
@@ -127,9 +127,9 @@ public class ConfiguracionController implements Initializable {
                 gastoDAO.clearAll();
                 gastoFijoDAO.clearAll();
                 presupuestoDAO.clearAll();
-                
+
                 showSuccessAlert("Restablecimiento Completado", "Todos los datos han sido borrados de la aplicación.");
-                
+
                 if (mainController != null) {
                     mainController.navigateTo("dashboard.fxml", null);
                 }

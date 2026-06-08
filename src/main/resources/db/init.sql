@@ -1,7 +1,7 @@
 -- Script de inicialización de la Base de Datos SQLite
 
--- Tabla de ingresos
-CREATE TABLE IF NOT EXISTS ingresos (
+-- Tabla de incomes
+CREATE TABLE IF NOT EXISTS incomes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fecha TEXT NOT NULL,         -- Formato ISO-8601 (YYYY-MM-DD)
     descripcion TEXT NOT NULL,
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS ingresos (
     tipo TEXT NOT NULL           -- 'Salario', 'Bonificación', 'Venta', 'Freelance', 'Otros'
 );
 
--- Tabla de gastos
-CREATE TABLE IF NOT EXISTS gastos (
+-- Tabla de expenditures
+CREATE TABLE IF NOT EXISTS expenditures (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fecha TEXT NOT NULL,         -- Formato ISO-8601 (YYYY-MM-DD)
     descripcion TEXT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS gastos (
     observacion TEXT
 );
 
--- Tabla de gastos fijos mensuales
+-- Tabla de expenditures fijos mensuales
 CREATE TABLE IF NOT EXISTS gastos_fijos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS gastos_fijos (
     estado TEXT NOT NULL DEFAULT 'Activo' -- 'Activo' o 'Inactivo'
 );
 
--- Tabla de presupuestos
-CREATE TABLE IF NOT EXISTS presupuestos (
+-- Tabla de specifications
+CREATE TABLE IF NOT EXISTS specifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     categoria TEXT NOT NULL UNIQUE,
     valor_presupuestado REAL NOT NULL CHECK (valor_presupuestado >= 0),
@@ -37,6 +37,6 @@ CREATE TABLE IF NOT EXISTS presupuestos (
 );
 
 -- Índices para mejorar el rendimiento de consultas por fecha y filtros
-CREATE INDEX IF NOT EXISTS idx_gastos_fecha ON gastos(fecha);
-CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos(fecha);
-CREATE INDEX IF NOT EXISTS idx_gastos_categoria ON gastos(categoria);
+CREATE INDEX IF NOT EXISTS idx_gastos_fecha ON expenditures(fecha);
+CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON incomes(fecha);
+CREATE INDEX IF NOT EXISTS idx_gastos_categoria ON expenditures(categoria);
