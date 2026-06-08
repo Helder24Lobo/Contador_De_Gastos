@@ -5,10 +5,10 @@ import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.personalfinance.contador.model.Gasto;
-import com.personalfinance.contador.model.GastoFijo;
-import com.personalfinance.contador.model.Ingreso;
-import com.personalfinance.contador.model.Presupuesto;
+import com.personalfinance.contador.model.Expenditure;
+import com.personalfinance.contador.model.FixedExpense;
+import com.personalfinance.contador.model.Income;
+import com.personalfinance.contador.model.Specifications;
 
 import java.awt.*;
 import java.io.FileOutputStream;
@@ -31,8 +31,8 @@ public class PdfReportService {
     private static final Color COLOR_TEXT_MUTED = new Color(108, 117, 125); // #6c757d
 
     public static void generateFinancialReport(String filePath, String title, LocalDate start, LocalDate end,
-                                               List<Ingreso> incomes, List<Gasto> expenses,
-                                               List<GastoFijo> fixedExpenses, List<Presupuesto> budgets) throws IOException, DocumentException {
+                                               List<Income> incomes, List<Expenditure> expenses,
+                                               List<FixedExpense> fixedExpenses, List<Specifications> budgets) throws IOException, DocumentException {
 
         Document document = new Document(PageSize.A4, 36, 36, 54, 54);
         PdfWriter.getInstance(document, new FileOutputStream(filePath));
@@ -53,9 +53,9 @@ public class PdfReportService {
         document.add(subtitleParagraph);
 
         // 2. Summary Section (Net Balance)
-        double totalIncomes = incomes.stream().mapToDouble(Ingreso::getValor).sum();
-        double totalExpenses = expenses.stream().mapToDouble(Gasto::getValor).sum();
-        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(GastoFijo::getValor).sum();
+        double totalIncomes = incomes.stream().mapToDouble(Income::getValor).sum();
+        double totalExpenses = expenses.stream().mapToDouble(Expenditure::getValor).sum();
+        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(FixedExpense::getValor).sum();
         double netBalance = totalIncomes - totalExpenses - totalFixed;
 
         document.add(new Paragraph("RESUMEN GENERAL", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, COLOR_PRIMARY)));
@@ -84,7 +84,7 @@ public class PdfReportService {
             incomesTable.setSpacingAfter(20);
 
             addTableHeader(incomesTable, new String[]{"Fecha", "Descripción", "Tipo", "Valor"});
-            for (Ingreso income : incomes) {
+            for (Income income : incomes) {
                 incomesTable.addCell(createCell(income.getFecha().format(DATE_FORMAT), Element.ALIGN_CENTER));
                 incomesTable.addCell(createCell(income.getDescripcion(), Element.ALIGN_LEFT));
                 incomesTable.addCell(createCell(income.getTipo(), Element.ALIGN_CENTER));
@@ -105,7 +105,7 @@ public class PdfReportService {
             expensesTable.setSpacingAfter(20);
 
             addTableHeader(expensesTable, new String[]{"Fecha", "Descripción", "Categoría", "Valor", "Observación"});
-            for (Gasto expense : expenses) {
+            for (Expenditure expense : expenses) {
                 expensesTable.addCell(createCell(expense.getFecha().format(DATE_FORMAT), Element.ALIGN_CENTER));
                 expensesTable.addCell(createCell(expense.getDescripcion(), Element.ALIGN_LEFT));
                 expensesTable.addCell(createCell(expense.getCategoria(), Element.ALIGN_CENTER));
@@ -127,7 +127,7 @@ public class PdfReportService {
             fixedTable.setSpacingAfter(20);
 
             addTableHeader(fixedTable, new String[]{"Nombre del Servicio", "Valor Mensual", "Día de Cobro", "Estado"});
-            for (GastoFijo fixedExpense : fixedExpenses) {
+            for (FixedExpense fixedExpense : fixedExpenses) {
                 fixedTable.addCell(createCell(fixedExpense.getNombre(), Element.ALIGN_LEFT));
                 fixedTable.addCell(createCell(CURRENCY_FORMAT.format(fixedExpense.getValor()), Element.ALIGN_RIGHT));
                 fixedTable.addCell(createCell(String.valueOf(fixedExpense.getDiaCobro()), Element.ALIGN_CENTER));

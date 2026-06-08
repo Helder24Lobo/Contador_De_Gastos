@@ -2,17 +2,17 @@ package com.personalfinance.contador.model;
 
 import java.time.LocalDate;
 
-public class Ingreso {
+public class Income {
     private int id;
     private LocalDate date;
     private String description;
     private double amount;
     private String type; // Salario, Bonificación, Venta, Freelance, Otros
 
-    public Ingreso() {
+    public Income() {
     }
 
-    public Ingreso(int id, LocalDate date, String description, double amount, String type) {
+    public Income(int id, LocalDate date, String description, double amount, String type) {
         this.id = id;
         this.date = date;
         this.description = description;
@@ -20,7 +20,7 @@ public class Ingreso {
         this.type = type;
     }
 
-    public Ingreso(LocalDate date, String description, double amount, String type) {
+    public Income(LocalDate date, String description, double amount, String type) {
         this.date = date;
         this.description = description;
         this.amount = amount;

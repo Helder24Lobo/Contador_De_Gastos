@@ -1,6 +1,6 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Gasto;
+import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.service.BudgetService;
 import com.personalfinance.contador.service.BudgetService.BudgetReport;
@@ -27,39 +27,62 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class GastosController implements Initializable {
+public class ExpensesController implements Initializable {
 
-    @FXML private Label lblTotalHoy;
-    @FXML private Label lblTotalSemana;
-    @FXML private Label lblTotalMes;
-    @FXML private Label lblTotalAnio;
+    @FXML
+    private Label lblTotalHoy;
+    @FXML
+    private Label lblTotalSemana;
+    @FXML
+    private Label lblTotalMes;
+    @FXML
+    private Label lblTotalAnio;
 
-    @FXML private DatePicker dpFecha;
-    @FXML private TextField txtDescripcion;
-    @FXML private ComboBox<String> cbCategoria;
-    @FXML private TextField txtValor;
-    @FXML private TextField txtObservacion;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnLimpiar;
+    @FXML
+    private DatePicker dpFecha;
+    @FXML
+    private TextField txtDescripcion;
+    @FXML
+    private ComboBox<String> cbCategoria;
+    @FXML
+    private TextField txtValor;
+    @FXML
+    private TextField txtObservacion;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnLimpiar;
 
-    @FXML private TextField txtBuscar;
-    @FXML private ComboBox<String> cbFiltroCategoria;
-    @FXML private DatePicker dpFiltroDesde;
-    @FXML private DatePicker dpFiltroHasta;
+    @FXML
+    private TextField txtBuscar;
+    @FXML
+    private ComboBox<String> cbFiltroCategoria;
+    @FXML
+    private DatePicker dpFiltroDesde;
+    @FXML
+    private DatePicker dpFiltroHasta;
 
-    @FXML private TableView<Gasto> tblGastos;
-    @FXML private TableColumn<Gasto, Number> colId;
-    @FXML private TableColumn<Gasto, String> colFecha;
-    @FXML private TableColumn<Gasto, String> colDescripcion;
-    @FXML private TableColumn<Gasto, String> colCategoria;
-    @FXML private TableColumn<Gasto, Number> colValor;
-    @FXML private TableColumn<Gasto, String> colObservacion;
+    @FXML
+    private TableView<Expenditure> tblGastos;
+    @FXML
+    private TableColumn<Expenditure, Number> colId;
+    @FXML
+    private TableColumn<Expenditure, String> colFecha;
+    @FXML
+    private TableColumn<Expenditure, String> colDescripcion;
+    @FXML
+    private TableColumn<Expenditure, String> colCategoria;
+    @FXML
+    private TableColumn<Expenditure, Number> colValor;
+    @FXML
+    private TableColumn<Expenditure, String> colObservacion;
 
     private final GastoDAO gastoDAO = new GastoDAO();
     private final BudgetService budgetService = new BudgetService();
-    private final ObservableList<Gasto> expensesList = FXCollections.observableArrayList();
-    private Gasto selectedExpense = null;
+    private final ObservableList<Expenditure> expensesList = FXCollections.observableArrayList();
+    private Expenditure selectedExpense = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
@@ -88,7 +111,7 @@ public class GastosController implements Initializable {
         colObservacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getObservacion()));
 
         // Format amount column with currency
-        colValor.setCellFactory(column -> new TableCell<Gasto, Number>() {
+        colValor.setCellFactory(column -> new TableCell<Expenditure, Number>() {
             @Override
             protected void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -116,7 +139,7 @@ public class GastosController implements Initializable {
 
     private void loadExpensesData() {
         try {
-            List<Gasto> allExpenses = gastoDAO.findAll();
+            List<Expenditure> allExpenses = gastoDAO.findAll();
             expensesList.setAll(allExpenses);
             tblGastos.setItems(expensesList);
 
@@ -193,7 +216,7 @@ public class GastosController implements Initializable {
 
             if (selectedExpense == null) {
                 // Create
-                Gasto newExpense = new Gasto(date, description, category, amount, note);
+                Expenditure newExpense = new Expenditure(date, description, category, amount, note);
                 gastoDAO.insert(newExpense);
             } else {
                 // Edit
@@ -254,7 +277,7 @@ public class GastosController implements Initializable {
         LocalDate to = dpFiltroHasta.getValue();
 
         try {
-            List<Gasto> filtered = gastoDAO.findByFilters(from, to, category, search);
+            List<Expenditure> filtered = gastoDAO.findByFilters(from, to, category, search);
             expensesList.setAll(filtered);
             tblGastos.setItems(expensesList);
         } catch (SQLException e) {
@@ -271,7 +294,7 @@ public class GastosController implements Initializable {
         loadExpensesData();
     }
 
-    private void populateForm(Gasto expense) {
+    private void populateForm(Expenditure expense) {
         dpFecha.setValue(expense.getFecha());
         txtDescripcion.setText(expense.getDescripcion());
         cbCategoria.setValue(expense.getCategoria());

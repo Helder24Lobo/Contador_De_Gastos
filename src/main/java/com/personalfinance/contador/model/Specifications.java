@@ -2,23 +2,23 @@ package com.personalfinance.contador.model;
 
 import java.time.LocalDate;
 
-public class Presupuesto {
+public class Specifications {
     private int id;
     private String category;
     private double budgetedAmount;
     private LocalDate creationDate;
 
-    public Presupuesto() {
+    public Specifications() {
     }
 
-    public Presupuesto(int id, String category, double budgetedAmount, LocalDate creationDate) {
+    public Specifications(int id, String category, double budgetedAmount, LocalDate creationDate) {
         this.id = id;
         this.category = category;
         this.budgetedAmount = budgetedAmount;
         this.creationDate = creationDate;
     }
 
-    public Presupuesto(String category, double budgetedAmount, LocalDate creationDate) {
+    public Specifications(String category, double budgetedAmount, LocalDate creationDate) {
         this.category = category;
         this.budgetedAmount = budgetedAmount;
         this.creationDate = creationDate;

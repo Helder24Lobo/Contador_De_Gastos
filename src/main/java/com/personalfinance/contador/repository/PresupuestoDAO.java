@@ -1,6 +1,6 @@
 package com.personalfinance.contador.repository;
 
-import com.personalfinance.contador.model.Presupuesto;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.util.DatabaseHelper;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class PresupuestoDAO {
 
-    public void save(Presupuesto budget) throws SQLException {
+    public void save(Specifications budget) throws SQLException {
         // ON CONFLICT(categoria) allows automatic upsert in modern SQLite
         String sql = "INSERT INTO presupuestos (categoria, valor_presupuestado, fecha_creacion) VALUES (?, ?, ?) " +
                      "ON CONFLICT(categoria) DO UPDATE SET valor_presupuestado = excluded.valor_presupuestado, fecha_creacion = excluded.fecha_creacion";
@@ -39,7 +39,7 @@ public class PresupuestoDAO {
         }
     }
 
-    public Presupuesto findByCategoria(String category) throws SQLException {
+    public Specifications findByCategoria(String category) throws SQLException {
         String sql = "SELECT * FROM presupuestos WHERE categoria = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -53,9 +53,9 @@ public class PresupuestoDAO {
         return null;
     }
 
-    public List<Presupuesto> findAll() throws SQLException {
+    public List<Specifications> findAll() throws SQLException {
         String sql = "SELECT * FROM presupuestos ORDER BY categoria ASC";
-        List<Presupuesto> list = new ArrayList<>();
+        List<Specifications> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -74,8 +74,8 @@ public class PresupuestoDAO {
         }
     }
 
-    private Presupuesto mapResultSetToPresupuesto(ResultSet rs) throws SQLException {
-        return new Presupuesto(
+    private Specifications mapResultSetToPresupuesto(ResultSet rs) throws SQLException {
+        return new Specifications(
                 rs.getInt("id"),
                 rs.getString("categoria"),
                 rs.getDouble("valor_presupuestado"),

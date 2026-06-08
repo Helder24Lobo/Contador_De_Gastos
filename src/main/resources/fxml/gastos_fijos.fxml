@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="15.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.GastosFijosController">
+<VBox spacing="15.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.FixedExpensesController">
     <Label styleClass="view-title" text="Gastos Fijos Mensuales" />
 
     <!-- Panel de Totales de Gastos Fijos -->

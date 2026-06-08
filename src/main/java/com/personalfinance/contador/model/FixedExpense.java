@@ -1,16 +1,16 @@
 package com.personalfinance.contador.model;
 
-public class GastoFijo {
+public class FixedExpense {
     private int id;
     private String name;
     private double amount;
     private int billingDay;
     private String status; // 'Activo' or 'Inactivo'
 
-    public GastoFijo() {
+    public FixedExpense() {
     }
 
-    public GastoFijo(int id, String name, double amount, int billingDay, String status) {
+    public FixedExpense(int id, String name, double amount, int billingDay, String status) {
         this.id = id;
         this.name = name;
         this.amount = amount;
@@ -18,7 +18,7 @@ public class GastoFijo {
         this.status = status;
     }
 
-    public GastoFijo(String name, double amount, int billingDay, String status) {
+    public FixedExpense(String name, double amount, int billingDay, String status) {
         this.name = name;
         this.amount = amount;
         this.billingDay = billingDay;

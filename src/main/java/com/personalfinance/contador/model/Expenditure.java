@@ -2,7 +2,7 @@ package com.personalfinance.contador.model;
 
 import java.time.LocalDate;
 
-public class Gasto {
+public class Expenditure {
     private int id;
     private LocalDate date;
     private String description;
@@ -10,10 +10,10 @@ public class Gasto {
     private double amount;
     private String note;
 
-    public Gasto() {
+    public Expenditure() {
     }
 
-    public Gasto(int id, LocalDate date, String description, String category, double amount, String note) {
+    public Expenditure(int id, LocalDate date, String description, String category, double amount, String note) {
         this.id = id;
         this.date = date;
         this.description = description;
@@ -22,7 +22,7 @@ public class Gasto {
         this.note = note;
     }
 
-    public Gasto(LocalDate date, String description, String category, double amount, String note) {
+    public Expenditure(LocalDate date, String description, String category, double amount, String note) {
         this.date = date;
         this.description = description;
         this.category = category;

@@ -1,8 +1,8 @@
 package com.personalfinance.contador.service;
 
-import com.personalfinance.contador.model.Gasto;
-import com.personalfinance.contador.model.GastoFijo;
-import com.personalfinance.contador.model.Ingreso;
+import com.personalfinance.contador.model.Expenditure;
+import com.personalfinance.contador.model.FixedExpense;
+import com.personalfinance.contador.model.Income;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class ExcelExportService {
 
     public static void exportToExcel(String filePath, LocalDate start, LocalDate end,
-                                     List<Ingreso> incomes, List<Gasto> expenses, List<GastoFijo> fixedExpenses) throws IOException {
+                                     List<Income> incomes, List<Expenditure> expenses, List<FixedExpense> fixedExpenses) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
 
             // 1. Common Styles
@@ -115,7 +115,7 @@ public class ExcelExportService {
     }
 
     private static void createSummarySheet(Workbook workbook, LocalDate start, LocalDate end,
-                                           List<Ingreso> incomes, List<Gasto> expenses, List<GastoFijo> fixedExpenses,
+                                           List<Income> incomes, List<Expenditure> expenses, List<FixedExpense> fixedExpenses,
                                            CellStyle currencyStyle, CellStyle boldStyle, CellStyle dateStyle, CellStyle boldCurrencyStyle) {
         Sheet sheet = workbook.createSheet("Resumen");
         sheet.setColumnWidth(0, 6000);
@@ -145,9 +145,9 @@ public class ExcelExportService {
         rowNum++; // Blank space
 
         // Calculations
-        double totalIncomes = incomes.stream().mapToDouble(Ingreso::getValor).sum();
-        double totalExpenses = expenses.stream().mapToDouble(Gasto::getValor).sum();
-        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(GastoFijo::getValor).sum();
+        double totalIncomes = incomes.stream().mapToDouble(Income::getValor).sum();
+        double totalExpenses = expenses.stream().mapToDouble(Expenditure::getValor).sum();
+        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(FixedExpense::getValor).sum();
         double netBalance = totalIncomes - totalExpenses - totalFixed;
 
         // Write Balance Cards
@@ -178,7 +178,7 @@ public class ExcelExportService {
         balanceCell.setCellStyle(boldCurrencyStyle);
     }
 
-    private static void createIncomesSheet(Workbook workbook, List<Ingreso> incomes,
+    private static void createIncomesSheet(Workbook workbook, List<Income> incomes,
                                             CellStyle headerStyle, CellStyle dateStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Ingresos");
         String[] headers = {"ID", "Fecha", "Descripción", "Tipo", "Valor"};
@@ -193,7 +193,7 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (Ingreso income : incomes) {
+        for (Income income : incomes) {
             Row row = sheet.createRow(rowNum++);
 
             Cell c0 = row.createCell(0);
@@ -223,7 +223,7 @@ public class ExcelExportService {
         }
     }
 
-    private static void createExpensesSheet(Workbook workbook, List<Gasto> expenses,
+    private static void createExpensesSheet(Workbook workbook, List<Expenditure> expenses,
                                           CellStyle headerStyle, CellStyle dateStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Gastos");
         String[] headers = {"ID", "Fecha", "Descripción", "Categoría", "Valor", "Observación"};
@@ -238,7 +238,7 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (Gasto expense : expenses) {
+        for (Expenditure expense : expenses) {
             Row row = sheet.createRow(rowNum++);
 
             Cell c0 = row.createCell(0);
@@ -272,7 +272,7 @@ public class ExcelExportService {
         }
     }
 
-    private static void createFixedExpensesSheet(Workbook workbook, List<GastoFijo> fixedExpenses,
+    private static void createFixedExpensesSheet(Workbook workbook, List<FixedExpense> fixedExpenses,
                                                CellStyle headerStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Gastos Fijos");
         String[] headers = {"ID", "Nombre", "Valor Mensual", "Día Cobro", "Estado"};
@@ -287,7 +287,7 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (GastoFijo fixedExpense : fixedExpenses) {
+        for (FixedExpense fixedExpense : fixedExpenses) {
             Row row = sheet.createRow(rowNum++);
 
             Cell c0 = row.createCell(0);

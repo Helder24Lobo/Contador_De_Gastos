@@ -1,9 +1,9 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Gasto;
-import com.personalfinance.contador.model.GastoFijo;
-import com.personalfinance.contador.model.Ingreso;
-import com.personalfinance.contador.model.Presupuesto;
+import com.personalfinance.contador.model.Expenditure;
+import com.personalfinance.contador.model.FixedExpense;
+import com.personalfinance.contador.model.Income;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
@@ -22,18 +22,20 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ReportesController implements Initializable {
+public class ReportsController implements Initializable {
 
-    @FXML private ComboBox<String> cbRangoRapido;
-    @FXML private DatePicker dpDesde;
-    @FXML private DatePicker dpHasta;
+    @FXML
+    private ComboBox<String> cbRangoRapido;
+    @FXML
+    private DatePicker dpDesde;
+    @FXML
+    private DatePicker dpHasta;
 
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();
@@ -105,11 +107,11 @@ public class ReportesController implements Initializable {
         File file = fileChooser.showSaveDialog(dpDesde.getScene().getWindow());
         if (file != null) {
             try {
-                List<Ingreso> ingresos = ingresoDAO.findByFilters(desde, hasta, null, null);
-                List<Gasto> gastos = gastoDAO.findByFilters(desde, hasta, null, null);
-                List<GastoFijo> fijos = gastoFijoDAO.findAll();
+                List<Income> incomes = ingresoDAO.findByFilters(desde, hasta, null, null);
+                List<Expenditure> expenditures = gastoDAO.findByFilters(desde, hasta, null, null);
+                List<FixedExpense> fijos = gastoFijoDAO.findAll();
 
-                ExcelExportService.exportToExcel(file.getAbsolutePath(), desde, hasta, ingresos, gastos, fijos);
+                ExcelExportService.exportToExcel(file.getAbsolutePath(), desde, hasta, incomes, expenditures, fijos);
                 showSuccessAlert("Exportación Completa", "El reporte en Excel se ha guardado correctamente en:\n" + file.getAbsolutePath());
             } catch (Exception e) {
                 showErrorAlert("Error al exportar a Excel", e.getMessage());
@@ -133,14 +135,14 @@ public class ReportesController implements Initializable {
         File file = fileChooser.showSaveDialog(dpDesde.getScene().getWindow());
         if (file != null) {
             try {
-                List<Ingreso> ingresos = ingresoDAO.findByFilters(desde, hasta, null, null);
-                List<Gasto> gastos = gastoDAO.findByFilters(desde, hasta, null, null);
-                List<GastoFijo> fijos = gastoFijoDAO.findAll();
-                List<Presupuesto> presupuestos = presupuestoDAO.findAll();
+                List<Income> incomes = ingresoDAO.findByFilters(desde, hasta, null, null);
+                List<Expenditure> expenditures = gastoDAO.findByFilters(desde, hasta, null, null);
+                List<FixedExpense> fijos = gastoFijoDAO.findAll();
+                List<Specifications> specifications = presupuestoDAO.findAll();
 
                 String tituloReporte = "Reporte Financiero (" + cbRangoRapido.getValue() + ")";
-                PdfReportService.generateFinancialReport(file.getAbsolutePath(), tituloReporte, desde, hasta, ingresos, gastos, fijos, presupuestos);
-                
+                PdfReportService.generateFinancialReport(file.getAbsolutePath(), tituloReporte, desde, hasta, incomes, expenditures, fijos, specifications);
+
                 showSuccessAlert("Exportación Completa", "El reporte en PDF se ha guardado correctamente en:\n" + file.getAbsolutePath());
             } catch (Exception e) {
                 showErrorAlert("Error al exportar a PDF", e.getMessage());

@@ -1,6 +1,6 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.GastoFijo;
+import com.personalfinance.contador.model.FixedExpense;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -24,30 +24,45 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class GastosFijosController implements Initializable {
+public class FixedExpensesController implements Initializable {
 
-    @FXML private Label lblTotalFijos;
-    @FXML private Label lblPorcentajeIngresos;
+    @FXML
+    private Label lblTotalFijos;
+    @FXML
+    private Label lblPorcentajeIngresos;
 
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtValor;
-    @FXML private TextField txtDiaCobro;
-    @FXML private ComboBox<String> cbEstado;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnLimpiar;
+    @FXML
+    private TextField txtNombre;
+    @FXML
+    private TextField txtValor;
+    @FXML
+    private TextField txtDiaCobro;
+    @FXML
+    private ComboBox<String> cbEstado;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnLimpiar;
 
-    @FXML private TableView<GastoFijo> tblGastosFijos;
-    @FXML private TableColumn<GastoFijo, Number> colId;
-    @FXML private TableColumn<GastoFijo, String> colNombre;
-    @FXML private TableColumn<GastoFijo, Number> colValor;
-    @FXML private TableColumn<GastoFijo, Number> colDiaCobro;
-    @FXML private TableColumn<GastoFijo, String> colEstado;
+    @FXML
+    private TableView<FixedExpense> tblGastosFijos;
+    @FXML
+    private TableColumn<FixedExpense, Number> colId;
+    @FXML
+    private TableColumn<FixedExpense, String> colNombre;
+    @FXML
+    private TableColumn<FixedExpense, Number> colValor;
+    @FXML
+    private TableColumn<FixedExpense, Number> colDiaCobro;
+    @FXML
+    private TableColumn<FixedExpense, String> colEstado;
 
     private final GastoFijoDAO gastoFijoDAO = new GastoFijoDAO();
     private final IngresoDAO ingresoDAO = new IngresoDAO();
-    private final ObservableList<GastoFijo> fixedExpensesList = FXCollections.observableArrayList();
-    private GastoFijo selectedFixedExpense = null;
+    private final ObservableList<FixedExpense> fixedExpensesList = FXCollections.observableArrayList();
+    private FixedExpense selectedFixedExpense = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
@@ -63,7 +78,7 @@ public class GastosFijosController implements Initializable {
         colDiaCobro.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getDiaCobro()));
         colEstado.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEstado()));
 
-        colValor.setCellFactory(column -> new TableCell<GastoFijo, Number>() {
+        colValor.setCellFactory(column -> new TableCell<FixedExpense, Number>() {
             @Override
             protected void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -88,7 +103,7 @@ public class GastosFijosController implements Initializable {
 
     private void loadFixedExpensesData() {
         try {
-            List<GastoFijo> all = gastoFijoDAO.findAll();
+            List<FixedExpense> all = gastoFijoDAO.findAll();
             fixedExpensesList.setAll(all);
             tblGastosFijos.setItems(fixedExpensesList);
 
@@ -135,7 +150,7 @@ public class GastosFijosController implements Initializable {
         try {
             if (selectedFixedExpense == null) {
                 // Create
-                GastoFijo newFixedExpense = new GastoFijo(name, amount, billingDay, status);
+                FixedExpense newFixedExpense = new FixedExpense(name, amount, billingDay, status);
                 gastoFijoDAO.insert(newFixedExpense);
             } else {
                 // Edit
@@ -185,7 +200,7 @@ public class GastosFijosController implements Initializable {
         tblGastosFijos.getSelectionModel().clearSelection();
     }
 
-    private void populateForm(GastoFijo fixedExpense) {
+    private void populateForm(FixedExpense fixedExpense) {
         txtNombre.setText(fixedExpense.getNombre());
         txtValor.setText(String.valueOf(fixedExpense.getValor()));
         txtDiaCobro.setText(String.valueOf(fixedExpense.getDiaCobro()));

@@ -1,7 +1,6 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Presupuesto;
-import com.personalfinance.contador.repository.GastoDAO;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.PresupuestoDAO;
 import com.personalfinance.contador.service.BudgetService;
 import com.personalfinance.contador.service.BudgetService.BudgetReport;
@@ -26,24 +25,34 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class PresupuestosController implements Initializable {
+public class BudgetsController implements Initializable {
 
-    @FXML private ComboBox<String> cbCategoria;
-    @FXML private TextField txtValor;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnLimpiar;
+    @FXML
+    private ComboBox<String> cbCategoria;
+    @FXML
+    private TextField txtValor;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnLimpiar;
 
-    @FXML private TableView<Presupuesto> tblPresupuestos;
-    @FXML private TableColumn<Presupuesto, String> colCategoria;
-    @FXML private TableColumn<Presupuesto, Number> colPresupuesto;
-    @FXML private TableColumn<Presupuesto, Number> colGastado;
-    @FXML private TableColumn<Presupuesto, Void> colConsumo;
+    @FXML
+    private TableView<Specifications> tblPresupuestos;
+    @FXML
+    private TableColumn<Specifications, String> colCategoria;
+    @FXML
+    private TableColumn<Specifications, Number> colPresupuesto;
+    @FXML
+    private TableColumn<Specifications, Number> colGastado;
+    @FXML
+    private TableColumn<Specifications, Void> colConsumo;
 
     private final PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
     private final BudgetService budgetService = new BudgetService();
-    private final ObservableList<Presupuesto> budgetsList = FXCollections.observableArrayList();
-    private Presupuesto selectedBudget = null;
+    private final ObservableList<Specifications> budgetsList = FXCollections.observableArrayList();
+    private Specifications selectedBudget = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
@@ -76,7 +85,7 @@ public class PresupuestosController implements Initializable {
         colGastado.setCellFactory(column -> createCurrencyCell());
 
         // Consumption Column with Progress Bar and Percentage
-        colConsumo.setCellFactory(column -> new TableCell<Presupuesto, Void>() {
+        colConsumo.setCellFactory(column -> new TableCell<Specifications, Void>() {
             private final ProgressBar progressBar = new ProgressBar(0.0);
             private final Label lblPercentage = new Label("0.0%");
             private final HBox container = new HBox(8, progressBar, lblPercentage);
@@ -93,7 +102,7 @@ public class PresupuestosController implements Initializable {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    Presupuesto budget = getTableView().getItems().get(getIndex());
+                    Specifications budget = getTableView().getItems().get(getIndex());
                     try {
                         BudgetReport report = budgetService.getCategoryConsumption(budget.getCategoria());
                         double percentage = report.getPorcentajeConsumido();
@@ -135,7 +144,7 @@ public class PresupuestosController implements Initializable {
 
     private void loadBudgetsData() {
         try {
-            List<Presupuesto> all = presupuestoDAO.findAll();
+            List<Specifications> all = presupuestoDAO.findAll();
             budgetsList.setAll(all);
             tblPresupuestos.setItems(budgetsList);
         } catch (SQLException e) {
@@ -153,7 +162,7 @@ public class PresupuestosController implements Initializable {
         double amount = Double.parseDouble(txtValor.getText().trim());
 
         try {
-            Presupuesto budget = new Presupuesto(category, amount, LocalDate.now());
+            Specifications budget = new Specifications(category, amount, LocalDate.now());
             presupuestoDAO.save(budget);
 
             loadBudgetsData();
@@ -193,14 +202,14 @@ public class PresupuestosController implements Initializable {
         tblPresupuestos.getSelectionModel().clearSelection();
     }
 
-    private void populateForm(Presupuesto budget) {
+    private void populateForm(Specifications budget) {
         cbCategoria.setValue(budget.getCategoria());
         txtValor.setText(String.valueOf(budget.getValorPresupuestado()));
         btnEliminar.setVisible(true);
     }
 
-    private TableCell<Presupuesto, Number> createCurrencyCell() {
-        return new TableCell<Presupuesto, Number>() {
+    private TableCell<Specifications, Number> createCurrencyCell() {
+        return new TableCell<Specifications, Number>() {
             @Override
             protected void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);

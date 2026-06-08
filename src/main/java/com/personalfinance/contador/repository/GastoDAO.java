@@ -1,6 +1,6 @@
 package com.personalfinance.contador.repository;
 
-import com.personalfinance.contador.model.Gasto;
+import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.util.DatabaseHelper;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class GastoDAO {
 
-    public void insert(Gasto expense) throws SQLException {
+    public void insert(Expenditure expense) throws SQLException {
         String sql = "INSERT INTO gastos (fecha, descripcion, categoria, valor, observacion) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,7 +31,7 @@ public class GastoDAO {
         }
     }
 
-    public void update(Gasto expense) throws SQLException {
+    public void update(Expenditure expense) throws SQLException {
         String sql = "UPDATE gastos SET fecha = ?, descripcion = ?, categoria = ?, valor = ?, observacion = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -54,7 +54,7 @@ public class GastoDAO {
         }
     }
 
-    public Gasto findById(int id) throws SQLException {
+    public Expenditure findById(int id) throws SQLException {
         String sql = "SELECT * FROM gastos WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,9 +68,9 @@ public class GastoDAO {
         return null;
     }
 
-    public List<Gasto> findAll() throws SQLException {
+    public List<Expenditure> findAll() throws SQLException {
         String sql = "SELECT * FROM gastos ORDER BY fecha DESC, id DESC";
-        List<Gasto> list = new ArrayList<>();
+        List<Expenditure> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -81,7 +81,7 @@ public class GastoDAO {
         return list;
     }
 
-    public List<Gasto> findByFilters(LocalDate start, LocalDate end, String category, String search) throws SQLException {
+    public List<Expenditure> findByFilters(LocalDate start, LocalDate end, String category, String search) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM gastos WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
@@ -106,7 +106,7 @@ public class GastoDAO {
 
         sql.append(" ORDER BY fecha DESC, id DESC");
 
-        List<Gasto> list = new ArrayList<>();
+        List<Expenditure> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -160,8 +160,8 @@ public class GastoDAO {
         }
     }
 
-    private Gasto mapResultSetToGasto(ResultSet rs) throws SQLException {
-        return new Gasto(
+    private Expenditure mapResultSetToGasto(ResultSet rs) throws SQLException {
+        return new Expenditure(
                 rs.getInt("id"),
                 LocalDate.parse(rs.getString("fecha")),
                 rs.getString("descripcion"),

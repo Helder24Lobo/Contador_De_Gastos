@@ -1,8 +1,8 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Gasto;
-import com.personalfinance.contador.model.Ingreso;
-import com.personalfinance.contador.model.Presupuesto;
+import com.personalfinance.contador.model.Expenditure;
+import com.personalfinance.contador.model.Income;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -31,13 +30,20 @@ import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
 
-    @FXML private Label lblIngresos;
-    @FXML private Label lblGastos;
-    @FXML private Label lblGastosFijos;
-    @FXML private Label lblBalance;
-    @FXML private Label lblMovimientosCount;
-    @FXML private VBox vboxAlertas;
-    @FXML private PieChart chartGastos;
+    @FXML
+    private Label lblIngresos;
+    @FXML
+    private Label lblGastos;
+    @FXML
+    private Label lblGastosFijos;
+    @FXML
+    private Label lblBalance;
+    @FXML
+    private Label lblMovimientosCount;
+    @FXML
+    private VBox vboxAlertas;
+    @FXML
+    private PieChart chartGastos;
 
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();
@@ -78,8 +84,8 @@ public class DashboardController implements Initializable {
             }
 
             // 2. Number of transactions
-            List<Ingreso> incomeList = ingresoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
-            List<Gasto> expenseList = gastoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
+            List<Income> incomeList = ingresoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
+            List<Expenditure> expenseList = gastoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
             int totalTransactions = incomeList.size() + expenseList.size();
             lblMovimientosCount.setText(String.valueOf(totalTransactions));
 
@@ -114,11 +120,11 @@ public class DashboardController implements Initializable {
 
     private void loadBudgetAlerts() throws SQLException {
         vboxAlertas.getChildren().clear();
-        List<Presupuesto> budgets = presupuestoDAO.findAll();
+        List<Specifications> budgets = presupuestoDAO.findAll();
 
         boolean hasAlerts = false;
 
-        for (Presupuesto budget : budgets) {
+        for (Specifications budget : budgets) {
             BudgetReport report = budgetService.getCategoryConsumption(budget.getCategoria());
             if (report.getStatus() == BudgetStatus.CRITICAL_100) {
                 hasAlerts = true;

@@ -1,7 +1,5 @@
 package com.personalfinance.contador.controller;
 
-import com.personalfinance.contador.model.Gasto;
-import com.personalfinance.contador.model.Ingreso;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
@@ -10,7 +8,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.*;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 
@@ -20,17 +21,24 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-public class EstadisticasController implements Initializable {
+public class StatisticsController implements Initializable {
 
-    @FXML private ComboBox<String> cbRango;
-    @FXML private DatePicker dpDesde;
-    @FXML private DatePicker dpHasta;
+    @FXML
+    private ComboBox<String> cbRango;
+    @FXML
+    private DatePicker dpDesde;
+    @FXML
+    private DatePicker dpHasta;
 
-    @FXML private PieChart chartCategorias;
-    @FXML private BarChart<String, Number> chartComparativa;
-    @FXML private LineChart<String, Number> chartEvolucion;
+    @FXML
+    private PieChart chartCategorias;
+    @FXML
+    private BarChart<String, Number> chartComparativa;
+    @FXML
+    private LineChart<String, Number> chartEvolucion;
 
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();

@@ -1,6 +1,6 @@
 package com.personalfinance.contador.repository;
 
-import com.personalfinance.contador.model.GastoFijo;
+import com.personalfinance.contador.model.FixedExpense;
 import com.personalfinance.contador.util.DatabaseHelper;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GastoFijoDAO {
 
-    public void insert(GastoFijo fixedExpense) throws SQLException {
+    public void insert(FixedExpense fixedExpense) throws SQLException {
         String sql = "INSERT INTO gastos_fijos (nombre, valor, dia_cobro, estado) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -27,7 +27,7 @@ public class GastoFijoDAO {
         }
     }
 
-    public void update(GastoFijo fixedExpense) throws SQLException {
+    public void update(FixedExpense fixedExpense) throws SQLException {
         String sql = "UPDATE gastos_fijos SET nombre = ?, valor = ?, dia_cobro = ?, estado = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -49,7 +49,7 @@ public class GastoFijoDAO {
         }
     }
 
-    public GastoFijo findById(int id) throws SQLException {
+    public FixedExpense findById(int id) throws SQLException {
         String sql = "SELECT * FROM gastos_fijos WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -63,9 +63,9 @@ public class GastoFijoDAO {
         return null;
     }
 
-    public List<GastoFijo> findAll() throws SQLException {
+    public List<FixedExpense> findAll() throws SQLException {
         String sql = "SELECT * FROM gastos_fijos ORDER BY nombre ASC";
-        List<GastoFijo> list = new ArrayList<>();
+        List<FixedExpense> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -106,8 +106,8 @@ public class GastoFijoDAO {
         }
     }
 
-    private GastoFijo mapResultSetToGastoFijo(ResultSet rs) throws SQLException {
-        return new GastoFijo(
+    private FixedExpense mapResultSetToGastoFijo(ResultSet rs) throws SQLException {
+        return new FixedExpense(
                 rs.getInt("id"),
                 rs.getString("nombre"),
                 rs.getDouble("valor"),

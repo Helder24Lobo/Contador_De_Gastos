@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox spacing="20.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.personalfinance.contador.controller.ReportesController">
+      fx:controller="com.personalfinance.contador.controller.ReportsController">
     <Label styleClass="view-title" text="Generador de Reportes"/>
 
     <VBox spacing="15.0" styleClass="card-balance" style="-fx-max-width: 600px; -fx-padding: 25px;">
@@ -27,7 +27,7 @@
         </GridPane>
 
         <Label style="-fx-text-fill: #718096; -fx-font-size: 12px; -fx-padding: 10 0 0 0;"
-               text="El reporte incluirá el balance neto, ingresos, gastos diarios y los gastos fijos activos asociados."/>
+               text="El reporte incluirá el balance neto, incomes, expenditures diarios y los expenditures fijos activos asociados."/>
 
         <HBox spacing="15.0" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
             <Button mnemonicParsing="false" onAction="#exportarExcel" styleClass="btn-secondary"

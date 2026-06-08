@@ -1,6 +1,6 @@
 package com.personalfinance.contador.service;
 
-import com.personalfinance.contador.model.Presupuesto;
+import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.PresupuestoDAO;
 
@@ -53,7 +53,7 @@ public class BudgetService {
      * Validates the budget status for a given category considering a new expense to be recorded.
      */
     public BudgetReport checkNewExpense(String category, double newExpenseAmount) throws SQLException {
-        Presupuesto budget = presupuestoDAO.findByCategoria(category);
+        Specifications budget = presupuestoDAO.findByCategoria(category);
         if (budget == null) {
             return new BudgetReport(BudgetStatus.OK, 0.0, 0.0, 0.0);
         }
