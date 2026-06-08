@@ -18,10 +18,10 @@ public class ConfigManager {
             try (InputStream input = new FileInputStream(configFile)) {
                 properties.load(input);
             } catch (IOException e) {
-                System.err.println("Error al cargar config.properties: " + e.getMessage());
+                System.err.println("Error loading config.properties: " + e.getMessage());
             }
         } else {
-            // Valores por defecto
+            // Default values
             properties.setProperty("theme", "dark");
             saveConfig();
         }
@@ -29,9 +29,9 @@ public class ConfigManager {
 
     public static void saveConfig() {
         try (OutputStream output = new FileOutputStream(CONFIG_FILE_PATH)) {
-            properties.store(output, "Configuraciones del Gestor Financiero Personal");
+            properties.store(output, "Personal Finance Manager Settings");
         } catch (IOException e) {
-            System.err.println("Error al guardar config.properties: " + e.getMessage());
+            System.err.println("Error saving config.properties: " + e.getMessage());
         }
     }
 

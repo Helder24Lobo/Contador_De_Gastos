@@ -4,30 +4,30 @@ import java.time.LocalDate;
 
 public class Gasto {
     private int id;
-    private LocalDate fecha;
-    private String descripcion;
-    private String categoria;
-    private double valor;
-    private String observacion;
+    private LocalDate date;
+    private String description;
+    private String category;
+    private double amount;
+    private String note;
 
     public Gasto() {
     }
 
-    public Gasto(int id, LocalDate fecha, String descripcion, String categoria, double valor, String observacion) {
+    public Gasto(int id, LocalDate date, String description, String category, double amount, String note) {
         this.id = id;
-        this.fecha = fecha;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.valor = valor;
-        this.observacion = observacion;
+        this.date = date;
+        this.description = description;
+        this.category = category;
+        this.amount = amount;
+        this.note = note;
     }
 
-    public Gasto(LocalDate fecha, String descripcion, String categoria, double valor, String observacion) {
-        this.fecha = fecha;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.valor = valor;
-        this.observacion = observacion;
+    public Gasto(LocalDate date, String description, String category, double amount, String note) {
+        this.date = date;
+        this.description = description;
+        this.category = category;
+        this.amount = amount;
+        this.note = note;
     }
 
     public int getId() {
@@ -39,54 +39,54 @@ public class Gasto {
     }
 
     public LocalDate getFecha() {
-        return fecha;
+        return date;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setFecha(LocalDate date) {
+        this.date = date;
     }
 
     public String getDescripcion() {
-        return descripcion;
+        return description;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescripcion(String description) {
+        this.description = description;
     }
 
     public String getCategoria() {
-        return categoria;
+        return category;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategoria(String category) {
+        this.category = category;
     }
 
     public double getValor() {
-        return valor;
+        return amount;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
+    public void setValor(double amount) {
+        this.amount = amount;
     }
 
     public String getObservacion() {
-        return observacion;
+        return note;
     }
 
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
+    public void setObservacion(String note) {
+        this.note = note;
     }
 
     @Override
     public String toString() {
         return "Gasto{" +
                 "id=" + id +
-                ", fecha=" + fecha +
-                ", descripcion='" + descripcion + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", valor=" + valor +
-                ", observacion='" + observacion + '\'' +
+                ", date=" + date +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", amount=" + amount +
+                ", note='" + note + '\'' +
                 '}';
     }
 }

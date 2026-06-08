@@ -58,28 +58,28 @@ public class GastosController implements Initializable {
 
     private final GastoDAO gastoDAO = new GastoDAO();
     private final BudgetService budgetService = new BudgetService();
-    private final ObservableList<Gasto> gastosList = FXCollections.observableArrayList();
-    private Gasto selectedGasto = null;
+    private final ObservableList<Gasto> expensesList = FXCollections.observableArrayList();
+    private Gasto selectedExpense = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
-    private final String[] categorias = {
-            "Arriendo", "Servicios", "Mercado", "Cuota celular", "Parqueadero", 
-            "Gym", "Aceite moto", "Corte de cabello", "Plan", "Gasolina", 
+    private final String[] categories = {
+            "Arriendo", "Servicios", "Mercado", "Cuota celular", "Parqueadero",
+            "Gym", "Aceite moto", "Corte de cabello", "Plan", "Gasolina",
             "Spotify", "Internet", "Otros"
     };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializar ComboBoxes
-        cbCategoria.setItems(FXCollections.observableArrayList(categorias));
-        
-        ObservableList<String> filtrosCategorias = FXCollections.observableArrayList("Todas");
-        filtrosCategorias.addAll(categorias);
-        cbFiltroCategoria.setItems(filtrosCategorias);
+        // Initialize ComboBoxes
+        cbCategoria.setItems(FXCollections.observableArrayList(categories));
+
+        ObservableList<String> filterCategories = FXCollections.observableArrayList("Todas");
+        filterCategories.addAll(categories);
+        cbFiltroCategoria.setItems(filterCategories);
         cbFiltroCategoria.setValue("Todas");
 
-        // Configurar Columnas de la Tabla
+        // Configure Table Columns
         colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
         colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha().toString()));
         colDescripcion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescripcion()));
@@ -87,7 +87,7 @@ public class GastosController implements Initializable {
         colValor.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getValor()));
         colObservacion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getObservacion()));
 
-        // Formatear columna valor con moneda
+        // Format amount column with currency
         colValor.setCellFactory(column -> new TableCell<Gasto, Number>() {
             @Override
             protected void updateItem(Number item, boolean empty) {
@@ -100,25 +100,25 @@ public class GastosController implements Initializable {
             }
         });
 
-        // Evento de selección de la tabla
+        // Table selection event
         tblGastos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                selectedGasto = newSelection;
-                populateForm(selectedGasto);
+                selectedExpense = newSelection;
+                populateForm(selectedExpense);
             }
         });
 
         dpFecha.setValue(LocalDate.now());
 
-        // Cargar Datos
-        loadGastosData();
+        // Load Data
+        loadExpensesData();
     }
 
-    private void loadGastosData() {
+    private void loadExpensesData() {
         try {
-            List<Gasto> allGastos = gastoDAO.findAll();
-            gastosList.setAll(allGastos);
-            tblGastos.setItems(gastosList);
+            List<Gasto> allExpenses = gastoDAO.findAll();
+            expensesList.setAll(allExpenses);
+            tblGastos.setItems(expensesList);
 
             calculateStatistics();
         } catch (SQLException e) {
@@ -129,29 +129,29 @@ public class GastosController implements Initializable {
     private void calculateStatistics() {
         try {
             LocalDate today = LocalDate.now();
-            
-            // Total Hoy
-            double hoy = gastoDAO.getTotalGastado(today, today);
-            
-            // Total Semana (Lunes a hoy)
-            LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-            double semana = gastoDAO.getTotalGastado(startOfWeek, today);
-            
-            // Total Mes
-            LocalDate startOfMonth = today.withDayOfMonth(1);
-            double mes = gastoDAO.getTotalGastado(startOfMonth, today);
-            
-            // Total Año
-            LocalDate startOfYear = today.withDayOfYear(1);
-            double anio = gastoDAO.getTotalGastado(startOfYear, today);
 
-            lblTotalHoy.setText(currencyFormat.format(hoy));
-            lblTotalSemana.setText(currencyFormat.format(semana));
-            lblTotalMes.setText(currencyFormat.format(mes));
-            lblTotalAnio.setText(currencyFormat.format(anio));
+            // Total Today
+            double todayTotal = gastoDAO.getTotalGastado(today, today);
+
+            // Total Week (Monday to today)
+            LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            double weekTotal = gastoDAO.getTotalGastado(startOfWeek, today);
+
+            // Total Month
+            LocalDate startOfMonth = today.withDayOfMonth(1);
+            double monthTotal = gastoDAO.getTotalGastado(startOfMonth, today);
+
+            // Total Year
+            LocalDate startOfYear = today.withDayOfYear(1);
+            double yearTotal = gastoDAO.getTotalGastado(startOfYear, today);
+
+            lblTotalHoy.setText(currencyFormat.format(todayTotal));
+            lblTotalSemana.setText(currencyFormat.format(weekTotal));
+            lblTotalMes.setText(currencyFormat.format(monthTotal));
+            lblTotalAnio.setText(currencyFormat.format(yearTotal));
 
         } catch (SQLException e) {
-            System.err.println("Error al calcular estadísticas: " + e.getMessage());
+            System.err.println("Error calculating statistics: " + e.getMessage());
         }
     }
 
@@ -161,51 +161,51 @@ public class GastosController implements Initializable {
             return;
         }
 
-        LocalDate fecha = dpFecha.getValue();
-        String descripcion = txtDescripcion.getText().trim();
-        String categoria = cbCategoria.getValue();
-        double valor = Double.parseDouble(txtValor.getText().trim());
-        String observacion = txtObservacion.getText().trim();
+        LocalDate date = dpFecha.getValue();
+        String description = txtDescripcion.getText().trim();
+        String category = cbCategoria.getValue();
+        double amount = Double.parseDouble(txtValor.getText().trim());
+        String note = txtObservacion.getText().trim();
 
         try {
-            // Validar presupuesto y emitir alertas si es necesario
-            BudgetReport report = budgetService.checkNewExpense(categoria, valor);
+            // Validate budget and emit alerts if necessary
+            BudgetReport report = budgetService.checkNewExpense(category, amount);
             if (report.getStatus() == BudgetStatus.CRITICAL_100) {
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("Límite de Presupuesto Excedido");
                 alert.setHeaderText("¡Presupuesto Agotado!");
-                alert.setContentText("El gasto que intentas guardar supera el 100% de tu presupuesto en la categoría '" + categoria + "'.\n" +
+                alert.setContentText("El gasto que intentas guardar supera el 100% de tu presupuesto en la categoría '" + category + "'.\n" +
                         "Presupuesto: " + currencyFormat.format(report.getPresupuestoDefinido()) + "\n" +
-                        "Gastado + Nuevo Gasto: " + currencyFormat.format(report.getTotalGastado() + valor) + "\n\n" +
+                        "Gastado + Nuevo Gasto: " + currencyFormat.format(report.getTotalGastado() + amount) + "\n\n" +
                         "¿Deseas registrar este gasto de todos modos?");
-                
+
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    return; // Abortar inserción
+                    return; // Abort insertion
                 }
             } else if (report.getStatus() == BudgetStatus.WARNING_80) {
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Advertencia de Presupuesto");
                 alert.setHeaderText("Consumo cercano al límite (>=80%)");
-                alert.setContentText("Al guardar este gasto, habrás consumido el " + String.format("%.1f", report.getPorcentajeConsumido()) + "% de tu presupuesto en la categoría '" + categoria + "'.");
+                alert.setContentText("Al guardar este gasto, habrás consumido el " + String.format("%.1f", report.getPorcentajeConsumido()) + "% de tu presupuesto en la categoría '" + category + "'.");
                 alert.showAndWait();
             }
 
-            if (selectedGasto == null) {
-                // Crear
-                Gasto nuevoGasto = new Gasto(fecha, descripcion, categoria, valor, observacion);
-                gastoDAO.insert(nuevoGasto);
+            if (selectedExpense == null) {
+                // Create
+                Gasto newExpense = new Gasto(date, description, category, amount, note);
+                gastoDAO.insert(newExpense);
             } else {
-                // Editar
-                selectedGasto.setFecha(fecha);
-                selectedGasto.setDescripcion(descripcion);
-                selectedGasto.setCategoria(categoria);
-                selectedGasto.setValor(valor);
-                selectedGasto.setObservacion(observacion);
-                gastoDAO.update(selectedGasto);
+                // Edit
+                selectedExpense.setFecha(date);
+                selectedExpense.setDescripcion(description);
+                selectedExpense.setCategoria(category);
+                selectedExpense.setValor(amount);
+                selectedExpense.setObservacion(note);
+                gastoDAO.update(selectedExpense);
             }
 
-            loadGastosData();
+            loadExpensesData();
             handleLimpiar(null);
 
         } catch (SQLException e) {
@@ -215,18 +215,18 @@ public class GastosController implements Initializable {
 
     @FXML
     private void handleEliminar(ActionEvent event) {
-        if (selectedGasto == null) return;
+        if (selectedExpense == null) return;
 
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de eliminar este gasto?");
-        alert.setContentText("Descripción: " + selectedGasto.getDescripcion() + "\nValor: " + currencyFormat.format(selectedGasto.getValor()));
+        alert.setContentText("Descripción: " + selectedExpense.getDescripcion() + "\nValor: " + currencyFormat.format(selectedExpense.getValor()));
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                gastoDAO.delete(selectedGasto.getId());
-                loadGastosData();
+                gastoDAO.delete(selectedExpense.getId());
+                loadExpensesData();
                 handleLimpiar(null);
             } catch (SQLException e) {
                 showErrorAlert("Error al eliminar el gasto", e.getMessage());
@@ -241,7 +241,7 @@ public class GastosController implements Initializable {
         cbCategoria.setValue(null);
         txtValor.clear();
         txtObservacion.clear();
-        selectedGasto = null;
+        selectedExpense = null;
         btnEliminar.setVisible(false);
         tblGastos.getSelectionModel().clearSelection();
     }
@@ -249,14 +249,14 @@ public class GastosController implements Initializable {
     @FXML
     private void applyFilters(ActionEvent event) {
         String search = txtBuscar.getText();
-        String categoria = cbFiltroCategoria.getValue();
-        LocalDate desde = dpFiltroDesde.getValue();
-        LocalDate hasta = dpFiltroHasta.getValue();
+        String category = cbFiltroCategoria.getValue();
+        LocalDate from = dpFiltroDesde.getValue();
+        LocalDate to = dpFiltroHasta.getValue();
 
         try {
-            List<Gasto> filtered = gastoDAO.findByFilters(desde, hasta, categoria, search);
-            gastosList.setAll(filtered);
-            tblGastos.setItems(gastosList);
+            List<Gasto> filtered = gastoDAO.findByFilters(from, to, category, search);
+            expensesList.setAll(filtered);
+            tblGastos.setItems(expensesList);
         } catch (SQLException e) {
             showErrorAlert("Error al filtrar gastos", e.getMessage());
         }
@@ -268,15 +268,15 @@ public class GastosController implements Initializable {
         cbFiltroCategoria.setValue("Todas");
         dpFiltroDesde.setValue(null);
         dpFiltroHasta.setValue(null);
-        loadGastosData();
+        loadExpensesData();
     }
 
-    private void populateForm(Gasto gasto) {
-        dpFecha.setValue(gasto.getFecha());
-        txtDescripcion.setText(gasto.getDescripcion());
-        cbCategoria.setValue(gasto.getCategoria());
-        txtValor.setText(String.valueOf(gasto.getValor()));
-        txtObservacion.setText(gasto.getObservacion() != null ? gasto.getObservacion() : "");
+    private void populateForm(Gasto expense) {
+        dpFecha.setValue(expense.getFecha());
+        txtDescripcion.setText(expense.getDescripcion());
+        cbCategoria.setValue(expense.getCategoria());
+        txtValor.setText(String.valueOf(expense.getValor()));
+        txtObservacion.setText(expense.getObservacion() != null ? expense.getObservacion() : "");
         btnEliminar.setVisible(true);
     }
 
@@ -294,8 +294,8 @@ public class GastosController implements Initializable {
             return false;
         }
         try {
-            double valor = Double.parseDouble(txtValor.getText().trim());
-            if (valor < 0) {
+            double amount = Double.parseDouble(txtValor.getText().trim());
+            if (amount < 0) {
                 showWarningAlert("Formulario Inválido", "El valor del gasto no puede ser negativo.");
                 return false;
             }

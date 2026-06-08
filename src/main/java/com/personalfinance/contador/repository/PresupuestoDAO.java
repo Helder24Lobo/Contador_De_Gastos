@@ -10,21 +10,21 @@ import java.util.List;
 
 public class PresupuestoDAO {
 
-    public void save(Presupuesto presupuesto) throws SQLException {
-        // ON CONFLICT(categoria) permite hacer upsert automáticamente en SQLite moderno
+    public void save(Presupuesto budget) throws SQLException {
+        // ON CONFLICT(categoria) allows automatic upsert in modern SQLite
         String sql = "INSERT INTO presupuestos (categoria, valor_presupuestado, fecha_creacion) VALUES (?, ?, ?) " +
                      "ON CONFLICT(categoria) DO UPDATE SET valor_presupuestado = excluded.valor_presupuestado, fecha_creacion = excluded.fecha_creacion";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, presupuesto.getCategoria());
-            pstmt.setDouble(2, presupuesto.getValorPresupuestado());
-            pstmt.setString(3, presupuesto.getFechaCreacion().toString());
+            pstmt.setString(1, budget.getCategoria());
+            pstmt.setDouble(2, budget.getValorPresupuestado());
+            pstmt.setString(3, budget.getFechaCreacion().toString());
             pstmt.executeUpdate();
 
-            // Si es una inserción nueva, recuperamos el ID
+            // If it is a new insertion, retrieve the generated ID
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    presupuesto.setId(generatedKeys.getInt(1));
+                    budget.setId(generatedKeys.getInt(1));
                 }
             }
         }
@@ -39,11 +39,11 @@ public class PresupuestoDAO {
         }
     }
 
-    public Presupuesto findByCategoria(String categoria) throws SQLException {
+    public Presupuesto findByCategoria(String category) throws SQLException {
         String sql = "SELECT * FROM presupuestos WHERE categoria = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, categoria);
+            pstmt.setString(1, category);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToPresupuesto(rs);

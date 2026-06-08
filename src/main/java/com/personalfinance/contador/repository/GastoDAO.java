@@ -12,35 +12,35 @@ import java.util.Map;
 
 public class GastoDAO {
 
-    public void insert(Gasto gasto) throws SQLException {
+    public void insert(Gasto expense) throws SQLException {
         String sql = "INSERT INTO gastos (fecha, descripcion, categoria, valor, observacion) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, gasto.getFecha().toString());
-            pstmt.setString(2, gasto.getDescripcion());
-            pstmt.setString(3, gasto.getCategoria());
-            pstmt.setDouble(4, gasto.getValor());
-            pstmt.setString(5, gasto.getObservacion());
+            pstmt.setString(1, expense.getFecha().toString());
+            pstmt.setString(2, expense.getDescripcion());
+            pstmt.setString(3, expense.getCategoria());
+            pstmt.setDouble(4, expense.getValor());
+            pstmt.setString(5, expense.getObservacion());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    gasto.setId(generatedKeys.getInt(1));
+                    expense.setId(generatedKeys.getInt(1));
                 }
             }
         }
     }
 
-    public void update(Gasto gasto) throws SQLException {
+    public void update(Gasto expense) throws SQLException {
         String sql = "UPDATE gastos SET fecha = ?, descripcion = ?, categoria = ?, valor = ?, observacion = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, gasto.getFecha().toString());
-            pstmt.setString(2, gasto.getDescripcion());
-            pstmt.setString(3, gasto.getCategoria());
-            pstmt.setDouble(4, gasto.getValor());
-            pstmt.setString(5, gasto.getObservacion());
-            pstmt.setInt(6, gasto.getId());
+            pstmt.setString(1, expense.getFecha().toString());
+            pstmt.setString(2, expense.getDescripcion());
+            pstmt.setString(3, expense.getCategoria());
+            pstmt.setDouble(4, expense.getValor());
+            pstmt.setString(5, expense.getObservacion());
+            pstmt.setInt(6, expense.getId());
             pstmt.executeUpdate();
         }
     }
@@ -81,7 +81,7 @@ public class GastoDAO {
         return list;
     }
 
-    public List<Gasto> findByFilters(LocalDate start, LocalDate end, String categoria, String search) throws SQLException {
+    public List<Gasto> findByFilters(LocalDate start, LocalDate end, String category, String search) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM gastos WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
@@ -93,9 +93,9 @@ public class GastoDAO {
             sql.append(" AND fecha <= ?");
             params.add(end.toString());
         }
-        if (categoria != null && !categoria.equalsIgnoreCase("Todas") && !categoria.trim().isEmpty()) {
+        if (category != null && !category.equalsIgnoreCase("Todas") && !category.trim().isEmpty()) {
             sql.append(" AND categoria = ?");
-            params.add(categoria);
+            params.add(category);
         }
         if (search != null && !search.trim().isEmpty()) {
             sql.append(" AND (descripcion LIKE ? OR observacion LIKE ?)");

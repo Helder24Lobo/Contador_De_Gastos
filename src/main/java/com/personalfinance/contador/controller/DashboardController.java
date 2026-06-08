@@ -57,56 +57,56 @@ public class DashboardController implements Initializable {
             LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
             LocalDate endOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
-            // 1. Obtener valores financieros
-            double totalIngresos = ingresoDAO.getTotalIngresado(startOfMonth, endOfMonth);
-            double totalGastos = gastoDAO.getTotalGastado(startOfMonth, endOfMonth);
-            double totalFijos = gastoFijoDAO.getTotalGastosFijosActivos();
-            double balanceNeto = totalIngresos - totalGastos - totalFijos;
+            // 1. Get financial values
+            double totalIncomes = ingresoDAO.getTotalIngresado(startOfMonth, endOfMonth);
+            double totalExpenses = gastoDAO.getTotalGastado(startOfMonth, endOfMonth);
+            double totalFixed = gastoFijoDAO.getTotalGastosFijosActivos();
+            double netBalance = totalIncomes - totalExpenses - totalFixed;
 
-            lblIngresos.setText(currencyFormat.format(totalIngresos));
-            lblGastos.setText(currencyFormat.format(totalGastos));
-            lblGastosFijos.setText(currencyFormat.format(totalFijos));
-            lblBalance.setText(currencyFormat.format(balanceNeto));
+            lblIngresos.setText(currencyFormat.format(totalIncomes));
+            lblGastos.setText(currencyFormat.format(totalExpenses));
+            lblGastosFijos.setText(currencyFormat.format(totalFixed));
+            lblBalance.setText(currencyFormat.format(netBalance));
 
-            // Colorear el balance si es negativo
-            if (balanceNeto < 0) {
+            // Color the balance if negative
+            if (netBalance < 0) {
                 lblBalance.getStyleClass().removeAll("value-balance");
-                lblBalance.setStyle("-fx-text-fill: #e53e3e;"); // Rojo claro/oscuro
+                lblBalance.setStyle("-fx-text-fill: #e53e3e;"); // Light/dark red
             } else {
                 lblBalance.getStyleClass().add("value-balance");
                 lblBalance.setStyle("");
             }
 
-            // 2. Cantidad de movimientos
-            List<Ingreso> listaIngresos = ingresoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
-            List<Gasto> listaGastos = gastoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
-            int totalMovimientos = listaIngresos.size() + listaGastos.size();
-            lblMovimientosCount.setText(String.valueOf(totalMovimientos));
+            // 2. Number of transactions
+            List<Ingreso> incomeList = ingresoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
+            List<Gasto> expenseList = gastoDAO.findByFilters(startOfMonth, endOfMonth, null, null);
+            int totalTransactions = incomeList.size() + expenseList.size();
+            lblMovimientosCount.setText(String.valueOf(totalTransactions));
 
-            // 3. Cargar Gráfico de Gastos por Categoría
+            // 3. Load Expense by Category Chart
             loadPieChart(startOfMonth, endOfMonth);
 
-            // 4. Cargar Alertas de Presupuestos
+            // 4. Load Budget Alerts
             loadBudgetAlerts();
 
         } catch (SQLException e) {
-            System.err.println("Error al cargar los datos del Dashboard: " + e.getMessage());
+            System.err.println("Error loading dashboard data: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     private void loadPieChart(LocalDate start, LocalDate end) throws SQLException {
-        Map<String, Double> mapGastos = gastoDAO.getGastosGroupedByCategoria(start, end);
+        Map<String, Double> expensesMap = gastoDAO.getGastosGroupedByCategoria(start, end);
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
-        if (mapGastos.isEmpty()) {
+        if (expensesMap.isEmpty()) {
             chartGastos.setTitle("Sin gastos registrados este mes");
             chartGastos.setData(pieChartData);
             return;
         }
 
         chartGastos.setTitle("Distribución de Gastos");
-        for (Map.Entry<String, Double> entry : mapGastos.entrySet()) {
+        for (Map.Entry<String, Double> entry : expensesMap.entrySet()) {
             pieChartData.add(new PieChart.Data(entry.getKey() + " (" + currencyFormat.format(entry.getValue()) + ")", entry.getValue()));
         }
         chartGastos.setData(pieChartData);
@@ -114,20 +114,20 @@ public class DashboardController implements Initializable {
 
     private void loadBudgetAlerts() throws SQLException {
         vboxAlertas.getChildren().clear();
-        List<Presupuesto> presupuestos = presupuestoDAO.findAll();
-        
+        List<Presupuesto> budgets = presupuestoDAO.findAll();
+
         boolean hasAlerts = false;
 
-        for (Presupuesto pres : presupuestos) {
-            BudgetReport report = budgetService.getCategoryConsumption(pres.getCategoria());
+        for (Presupuesto budget : budgets) {
+            BudgetReport report = budgetService.getCategoryConsumption(budget.getCategoria());
             if (report.getStatus() == BudgetStatus.CRITICAL_100) {
                 hasAlerts = true;
-                createAlertNode("CRÍTICO", "Has superado el 100% del presupuesto para '" + pres.getCategoria() + 
+                createAlertNode("CRÍTICO", "Has superado el 100% del presupuesto para '" + budget.getCategoria() +
                         "'. Consumo: " + String.format("%.1f", report.getPorcentajeConsumido()) + "% (" +
                         currencyFormat.format(report.getTotalGastado()) + " de " + currencyFormat.format(report.getPresupuestoDefinido()) + ")", "budget-alert-critical");
             } else if (report.getStatus() == BudgetStatus.WARNING_80) {
                 hasAlerts = true;
-                createAlertNode("ADVERTENCIA", "Has consumido más del 80% del presupuesto para '" + pres.getCategoria() + 
+                createAlertNode("ADVERTENCIA", "Has consumido más del 80% del presupuesto para '" + budget.getCategoria() +
                         "'. Consumo: " + String.format("%.1f", report.getPorcentajeConsumido()) + "% (" +
                         currencyFormat.format(report.getTotalGastado()) + " de " + currencyFormat.format(report.getPresupuestoDefinido()) + ")", "budget-alert-warning");
             }
@@ -147,7 +147,7 @@ public class DashboardController implements Initializable {
 
         Label lblTitle = new Label(level + ": Presupuesto Excedido");
         lblTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
-        
+
         Label lblMsg = new Label(message);
         lblMsg.setWrapText(true);
 

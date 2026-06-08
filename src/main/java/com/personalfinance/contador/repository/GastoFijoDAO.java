@@ -9,33 +9,33 @@ import java.util.List;
 
 public class GastoFijoDAO {
 
-    public void insert(GastoFijo gastoFijo) throws SQLException {
+    public void insert(GastoFijo fixedExpense) throws SQLException {
         String sql = "INSERT INTO gastos_fijos (nombre, valor, dia_cobro, estado) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, gastoFijo.getNombre());
-            pstmt.setDouble(2, gastoFijo.getValor());
-            pstmt.setInt(3, gastoFijo.getDiaCobro());
-            pstmt.setString(4, gastoFijo.getEstado());
+            pstmt.setString(1, fixedExpense.getNombre());
+            pstmt.setDouble(2, fixedExpense.getValor());
+            pstmt.setInt(3, fixedExpense.getDiaCobro());
+            pstmt.setString(4, fixedExpense.getEstado());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    gastoFijo.setId(generatedKeys.getInt(1));
+                    fixedExpense.setId(generatedKeys.getInt(1));
                 }
             }
         }
     }
 
-    public void update(GastoFijo gastoFijo) throws SQLException {
+    public void update(GastoFijo fixedExpense) throws SQLException {
         String sql = "UPDATE gastos_fijos SET nombre = ?, valor = ?, dia_cobro = ?, estado = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, gastoFijo.getNombre());
-            pstmt.setDouble(2, gastoFijo.getValor());
-            pstmt.setInt(3, gastoFijo.getDiaCobro());
-            pstmt.setString(4, gastoFijo.getEstado());
-            pstmt.setInt(5, gastoFijo.getId());
+            pstmt.setString(1, fixedExpense.getNombre());
+            pstmt.setDouble(2, fixedExpense.getValor());
+            pstmt.setInt(3, fixedExpense.getDiaCobro());
+            pstmt.setString(4, fixedExpense.getEstado());
+            pstmt.setInt(5, fixedExpense.getId());
             pstmt.executeUpdate();
         }
     }
@@ -88,11 +88,11 @@ public class GastoFijoDAO {
         return 0.0;
     }
 
-    public void updateEstado(int id, String estado) throws SQLException {
+    public void updateEstado(int id, String status) throws SQLException {
         String sql = "UPDATE gastos_fijos SET estado = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, estado);
+            pstmt.setString(1, status);
             pstmt.setInt(2, id);
             pstmt.executeUpdate();
         }

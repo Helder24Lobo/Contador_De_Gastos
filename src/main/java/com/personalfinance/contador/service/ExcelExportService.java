@@ -14,29 +14,29 @@ import java.util.List;
 public class ExcelExportService {
 
     public static void exportToExcel(String filePath, LocalDate start, LocalDate end,
-                                     List<Ingreso> ingresos, List<Gasto> gastos, List<GastoFijo> gastosFijos) throws IOException {
+                                     List<Ingreso> incomes, List<Gasto> expenses, List<GastoFijo> fixedExpenses) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
-            
-            // 1. Estilos Comunes
+
+            // 1. Common Styles
             CellStyle headerStyle = createHeaderStyle(workbook);
             CellStyle currencyStyle = createCurrencyStyle(workbook);
             CellStyle dateStyle = createDateStyle(workbook);
             CellStyle boldStyle = createBoldStyle(workbook);
             CellStyle boldCurrencyStyle = createBoldCurrencyStyle(workbook);
 
-            // 2. Creación de la pestaña "Resumen"
-            createResumenSheet(workbook, start, end, ingresos, gastos, gastosFijos, currencyStyle, boldStyle, dateStyle, boldCurrencyStyle);
+            // 2. Create "Summary" sheet
+            createSummarySheet(workbook, start, end, incomes, expenses, fixedExpenses, currencyStyle, boldStyle, dateStyle, boldCurrencyStyle);
 
-            // 3. Creación de la pestaña "Ingresos"
-            createIngresosSheet(workbook, ingresos, headerStyle, dateStyle, currencyStyle);
+            // 3. Create "Incomes" sheet
+            createIncomesSheet(workbook, incomes, headerStyle, dateStyle, currencyStyle);
 
-            // 4. Creación de la pestaña "Gastos"
-            createGastosSheet(workbook, gastos, headerStyle, dateStyle, currencyStyle);
+            // 4. Create "Expenses" sheet
+            createExpensesSheet(workbook, expenses, headerStyle, dateStyle, currencyStyle);
 
-            // 5. Creación de la pestaña "Gastos Fijos"
-            createGastosFijosSheet(workbook, gastosFijos, headerStyle, currencyStyle);
+            // 5. Create "Fixed Expenses" sheet
+            createFixedExpensesSheet(workbook, fixedExpenses, headerStyle, currencyStyle);
 
-            // Guardar el archivo
+            // Save the file
             try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
                 workbook.write(fileOut);
             }
@@ -114,8 +114,8 @@ public class ExcelExportService {
         return style;
     }
 
-    private static void createResumenSheet(Workbook workbook, LocalDate start, LocalDate end,
-                                           List<Ingreso> ingresos, List<Gasto> gastos, List<GastoFijo> gastosFijos,
+    private static void createSummarySheet(Workbook workbook, LocalDate start, LocalDate end,
+                                           List<Ingreso> incomes, List<Gasto> expenses, List<GastoFijo> fixedExpenses,
                                            CellStyle currencyStyle, CellStyle boldStyle, CellStyle dateStyle, CellStyle boldCurrencyStyle) {
         Sheet sheet = workbook.createSheet("Resumen");
         sheet.setColumnWidth(0, 6000);
@@ -123,13 +123,13 @@ public class ExcelExportService {
 
         int rowNum = 0;
 
-        // Título del Reporte
+        // Report Title
         Row titleRow = sheet.createRow(rowNum++);
         Cell titleCell = titleRow.createCell(0);
         titleCell.setCellValue("REPORTE FINANCIERO PERSONAL");
         titleCell.setCellStyle(boldStyle);
 
-        // Rango de fechas
+        // Date range
         Row rangeRow = sheet.createRow(rowNum++);
         rangeRow.createCell(0).setCellValue("Fecha Inicio:");
         Cell startCell = rangeRow.createCell(1);
@@ -142,47 +142,47 @@ public class ExcelExportService {
         endCell.setCellValue(end.toString());
         endCell.setCellStyle(dateStyle);
 
-        rowNum++; // Espacio en blanco
+        rowNum++; // Blank space
 
-        // Cálculos
-        double totalIngresos = ingresos.stream().mapToDouble(Ingreso::getValor).sum();
-        double totalGastos = gastos.stream().mapToDouble(Gasto::getValor).sum();
-        double totalFijos = gastosFijos.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(GastoFijo::getValor).sum();
-        double balanceNeto = totalIngresos - totalGastos - totalFijos;
+        // Calculations
+        double totalIncomes = incomes.stream().mapToDouble(Ingreso::getValor).sum();
+        double totalExpenses = expenses.stream().mapToDouble(Gasto::getValor).sum();
+        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(GastoFijo::getValor).sum();
+        double netBalance = totalIncomes - totalExpenses - totalFixed;
 
-        // Escribir Tarjetas de Balance
-        Row rIng = sheet.createRow(rowNum++);
-        rIng.createCell(0).setCellValue("Total Ingresos:");
-        Cell cIng = rIng.createCell(1);
-        cIng.setCellValue(totalIngresos);
-        cIng.setCellStyle(currencyStyle);
+        // Write Balance Cards
+        Row incomeRow = sheet.createRow(rowNum++);
+        incomeRow.createCell(0).setCellValue("Total Ingresos:");
+        Cell incomeCell = incomeRow.createCell(1);
+        incomeCell.setCellValue(totalIncomes);
+        incomeCell.setCellStyle(currencyStyle);
 
-        Row rGast = sheet.createRow(rowNum++);
-        rGast.createCell(0).setCellValue("Total Gastos Diarios:");
-        Cell cGast = rGast.createCell(1);
-        cGast.setCellValue(totalGastos);
-        cGast.setCellStyle(currencyStyle);
+        Row expenseRow = sheet.createRow(rowNum++);
+        expenseRow.createCell(0).setCellValue("Total Gastos Diarios:");
+        Cell expenseCell = expenseRow.createCell(1);
+        expenseCell.setCellValue(totalExpenses);
+        expenseCell.setCellStyle(currencyStyle);
 
-        Row rFij = sheet.createRow(rowNum++);
-        rFij.createCell(0).setCellValue("Gastos Fijos Activos:");
-        Cell cFij = rFij.createCell(1);
-        cFij.setCellValue(totalFijos);
-        cFij.setCellStyle(currencyStyle);
+        Row fixedRow = sheet.createRow(rowNum++);
+        fixedRow.createCell(0).setCellValue("Gastos Fijos Activos:");
+        Cell fixedCell = fixedRow.createCell(1);
+        fixedCell.setCellValue(totalFixed);
+        fixedCell.setCellStyle(currencyStyle);
 
-        Row rBal = sheet.createRow(rowNum++);
-        Cell lblBal = rBal.createCell(0);
-        lblBal.setCellValue("Balance Neto:");
-        lblBal.setCellStyle(boldStyle);
-        Cell cBal = rBal.createCell(1);
-        cBal.setCellValue(balanceNeto);
-        cBal.setCellStyle(boldCurrencyStyle);
+        Row balanceRow = sheet.createRow(rowNum++);
+        Cell balanceLabel = balanceRow.createCell(0);
+        balanceLabel.setCellValue("Balance Neto:");
+        balanceLabel.setCellStyle(boldStyle);
+        Cell balanceCell = balanceRow.createCell(1);
+        balanceCell.setCellValue(netBalance);
+        balanceCell.setCellStyle(boldCurrencyStyle);
     }
 
-    private static void createIngresosSheet(Workbook workbook, List<Ingreso> ingresos,
+    private static void createIncomesSheet(Workbook workbook, List<Ingreso> incomes,
                                             CellStyle headerStyle, CellStyle dateStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Ingresos");
         String[] headers = {"ID", "Fecha", "Descripción", "Tipo", "Valor"};
-        
+
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -193,37 +193,37 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (Ingreso ing : ingresos) {
+        for (Ingreso income : incomes) {
             Row row = sheet.createRow(rowNum++);
-            
+
             Cell c0 = row.createCell(0);
-            c0.setCellValue(ing.getId());
+            c0.setCellValue(income.getId());
             c0.setCellStyle(borderStyle);
 
             Cell c1 = row.createCell(1);
-            c1.setCellValue(ing.getFecha().toString());
+            c1.setCellValue(income.getFecha().toString());
             c1.setCellStyle(dateStyle);
 
             Cell c2 = row.createCell(2);
-            c2.setCellValue(ing.getDescripcion());
+            c2.setCellValue(income.getDescripcion());
             c2.setCellStyle(borderStyle);
 
             Cell c3 = row.createCell(3);
-            c3.setCellValue(ing.getTipo());
+            c3.setCellValue(income.getTipo());
             c3.setCellStyle(borderStyle);
 
             Cell c4 = row.createCell(4);
-            c4.setCellValue(ing.getValor());
+            c4.setCellValue(income.getValor());
             c4.setCellStyle(currencyStyle);
         }
 
-        // Autoajustar columnas
+        // Auto-size columns
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
     }
 
-    private static void createGastosSheet(Workbook workbook, List<Gasto> gastos,
+    private static void createExpensesSheet(Workbook workbook, List<Gasto> expenses,
                                           CellStyle headerStyle, CellStyle dateStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Gastos");
         String[] headers = {"ID", "Fecha", "Descripción", "Categoría", "Valor", "Observación"};
@@ -238,41 +238,41 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (Gasto g : gastos) {
+        for (Gasto expense : expenses) {
             Row row = sheet.createRow(rowNum++);
 
             Cell c0 = row.createCell(0);
-            c0.setCellValue(g.getId());
+            c0.setCellValue(expense.getId());
             c0.setCellStyle(borderStyle);
 
             Cell c1 = row.createCell(1);
-            c1.setCellValue(g.getFecha().toString());
+            c1.setCellValue(expense.getFecha().toString());
             c1.setCellStyle(dateStyle);
 
             Cell c2 = row.createCell(2);
-            c2.setCellValue(g.getDescripcion());
+            c2.setCellValue(expense.getDescripcion());
             c2.setCellStyle(borderStyle);
 
             Cell c3 = row.createCell(3);
-            c3.setCellValue(g.getCategoria());
+            c3.setCellValue(expense.getCategoria());
             c3.setCellStyle(borderStyle);
 
             Cell c4 = row.createCell(4);
-            c4.setCellValue(g.getValor());
+            c4.setCellValue(expense.getValor());
             c4.setCellStyle(currencyStyle);
 
             Cell c5 = row.createCell(5);
-            c5.setCellValue(g.getObservacion() != null ? g.getObservacion() : "");
+            c5.setCellValue(expense.getObservacion() != null ? expense.getObservacion() : "");
             c5.setCellStyle(borderStyle);
         }
 
-        // Autoajustar columnas
+        // Auto-size columns
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
     }
 
-    private static void createGastosFijosSheet(Workbook workbook, List<GastoFijo> fijos,
+    private static void createFixedExpensesSheet(Workbook workbook, List<GastoFijo> fixedExpenses,
                                                CellStyle headerStyle, CellStyle currencyStyle) {
         Sheet sheet = workbook.createSheet("Gastos Fijos");
         String[] headers = {"ID", "Nombre", "Valor Mensual", "Día Cobro", "Estado"};
@@ -287,31 +287,31 @@ public class ExcelExportService {
         CellStyle borderStyle = createDefaultBorderStyle(workbook);
 
         int rowNum = 1;
-        for (GastoFijo gf : fijos) {
+        for (GastoFijo fixedExpense : fixedExpenses) {
             Row row = sheet.createRow(rowNum++);
 
             Cell c0 = row.createCell(0);
-            c0.setCellValue(gf.getId());
+            c0.setCellValue(fixedExpense.getId());
             c0.setCellStyle(borderStyle);
 
             Cell c1 = row.createCell(1);
-            c1.setCellValue(gf.getNombre());
+            c1.setCellValue(fixedExpense.getNombre());
             c1.setCellStyle(borderStyle);
 
             Cell c2 = row.createCell(2);
-            c2.setCellValue(gf.getValor());
+            c2.setCellValue(fixedExpense.getValor());
             c2.setCellStyle(currencyStyle);
 
             Cell c3 = row.createCell(3);
-            c3.setCellValue(gf.getDiaCobro());
+            c3.setCellValue(fixedExpense.getDiaCobro());
             c3.setCellStyle(borderStyle);
 
             Cell c4 = row.createCell(4);
-            c4.setCellValue(gf.getEstado());
+            c4.setCellValue(fixedExpense.getEstado());
             c4.setCellStyle(borderStyle);
         }
 
-        // Autoajustar columnas
+        // Auto-size columns
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }

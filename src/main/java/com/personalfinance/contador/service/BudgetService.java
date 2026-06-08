@@ -15,8 +15,8 @@ public class BudgetService {
 
     public enum BudgetStatus {
         OK,
-        WARNING_80, // Supera el 80% pero menor al 100%
-        CRITICAL_100 // Supera el 100%
+        WARNING_80, // Exceeds 80% but less than 100%
+        CRITICAL_100 // Exceeds 100%
     }
 
     public static class BudgetReport {
@@ -25,11 +25,11 @@ public class BudgetService {
         private final double totalGastado;
         private final double porcentajeConsumido;
 
-        public BudgetReport(BudgetStatus status, double presupuestoDefinido, double totalGastado, double porcentajeConsumido) {
+        public BudgetReport(BudgetStatus status, double budgetDefined, double totalSpent, double percentageConsumed) {
             this.status = status;
-            this.presupuestoDefinido = presupuestoDefinido;
-            this.totalGastado = totalGastado;
-            this.porcentajeConsumido = porcentajeConsumido;
+            this.presupuestoDefinido = budgetDefined;
+            this.totalGastado = totalSpent;
+            this.porcentajeConsumido = percentageConsumed;
         }
 
         public BudgetStatus getStatus() {
@@ -50,47 +50,47 @@ public class BudgetService {
     }
 
     /**
-     * Valida el estado de presupuesto para una categoría dada considerando un nuevo gasto que se desea registrar.
+     * Validates the budget status for a given category considering a new expense to be recorded.
      */
-    public BudgetReport checkNewExpense(String categoria, double nuevoValorGasto) throws SQLException {
-        Presupuesto presupuesto = presupuestoDAO.findByCategoria(categoria);
-        if (presupuesto == null) {
+    public BudgetReport checkNewExpense(String category, double newExpenseAmount) throws SQLException {
+        Presupuesto budget = presupuestoDAO.findByCategoria(category);
+        if (budget == null) {
             return new BudgetReport(BudgetStatus.OK, 0.0, 0.0, 0.0);
         }
 
-        // Obtener rango del mes actual
+        // Get the current month range
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
-        // Calcular el total gastado en este mes para esa categoría
-        double totalGastadoActual = gastoDAO.findByFilters(startOfMonth, endOfMonth, categoria, null)
+        // Calculate the total spent this month for that category
+        double currentTotalSpent = gastoDAO.findByFilters(startOfMonth, endOfMonth, category, null)
                 .stream()
                 .mapToDouble(g -> g.getValor())
                 .sum();
 
-        double totalConNuevoGasto = totalGastadoActual + nuevoValorGasto;
-        double valorPresupuestado = presupuesto.getValorPresupuestado();
-        
-        if (valorPresupuestado <= 0) {
-            return new BudgetReport(BudgetStatus.OK, 0.0, totalConNuevoGasto, 0.0);
+        double totalWithNewExpense = currentTotalSpent + newExpenseAmount;
+        double budgetedAmount = budget.getValorPresupuestado();
+
+        if (budgetedAmount <= 0) {
+            return new BudgetReport(BudgetStatus.OK, 0.0, totalWithNewExpense, 0.0);
         }
 
-        double porcentaje = (totalConNuevoGasto / valorPresupuestado) * 100;
+        double percentage = (totalWithNewExpense / budgetedAmount) * 100;
         BudgetStatus status = BudgetStatus.OK;
 
-        if (porcentaje >= 100) {
+        if (percentage >= 100) {
             status = BudgetStatus.CRITICAL_100;
-        } else if (porcentaje >= 80) {
+        } else if (percentage >= 80) {
             status = BudgetStatus.WARNING_80;
         }
 
-        return new BudgetReport(status, valorPresupuestado, totalGastadoActual, porcentaje);
+        return new BudgetReport(status, budgetedAmount, currentTotalSpent, percentage);
     }
 
     /**
-     * Valida el consumo del presupuesto de este mes para una categoría sin agregar nuevos gastos.
+     * Validates the budget consumption for the current month for a category without adding new expenses.
      */
-    public BudgetReport getCategoryConsumption(String categoria) throws SQLException {
-        return checkNewExpense(categoria, 0.0);
+    public BudgetReport getCategoryConsumption(String category) throws SQLException {
+        return checkNewExpense(category, 0.0);
     }
 }

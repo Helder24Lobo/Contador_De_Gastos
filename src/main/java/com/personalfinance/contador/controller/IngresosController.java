@@ -43,26 +43,26 @@ public class IngresosController implements Initializable {
     @FXML private TableColumn<Ingreso, Number> colValor;
 
     private final IngresoDAO ingresoDAO = new IngresoDAO();
-    private final ObservableList<Ingreso> ingresosList = FXCollections.observableArrayList();
-    private Ingreso selectedIngreso = null;
+    private final ObservableList<Ingreso> incomesList = FXCollections.observableArrayList();
+    private Ingreso selectedIncome = null;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
-    private final String[] tiposIngreso = {
+    private final String[] incomeTypes = {
             "Salario", "Bonificación", "Venta", "Freelance", "Otros"
     };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializar ComboBoxes
-        cbTipo.setItems(FXCollections.observableArrayList(tiposIngreso));
-        
-        ObservableList<String> filtrosTipos = FXCollections.observableArrayList("Todos");
-        filtrosTipos.addAll(tiposIngreso);
-        cbFiltroTipo.setItems(filtrosTipos);
+        // Initialize ComboBoxes
+        cbTipo.setItems(FXCollections.observableArrayList(incomeTypes));
+
+        ObservableList<String> filterTypes = FXCollections.observableArrayList("Todos");
+        filterTypes.addAll(incomeTypes);
+        cbFiltroTipo.setItems(filterTypes);
         cbFiltroTipo.setValue("Todos");
 
-        // Configurar Columnas
+        // Configure Table Columns
         colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
         colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFecha().toString()));
         colDescripcion.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescripcion()));
@@ -81,24 +81,24 @@ public class IngresosController implements Initializable {
             }
         });
 
-        // Evento selección tabla
+        // Table selection event
         tblIngresos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                selectedIngreso = newSelection;
-                populateForm(selectedIngreso);
+                selectedIncome = newSelection;
+                populateForm(selectedIncome);
             }
         });
 
         dpFecha.setValue(LocalDate.now());
 
-        loadIngresosData();
+        loadIncomesData();
     }
 
-    private void loadIngresosData() {
+    private void loadIncomesData() {
         try {
             List<Ingreso> all = ingresoDAO.findAll();
-            ingresosList.setAll(all);
-            tblIngresos.setItems(ingresosList);
+            incomesList.setAll(all);
+            tblIngresos.setItems(incomesList);
         } catch (SQLException e) {
             showErrorAlert("Error al cargar ingresos", e.getMessage());
         }
@@ -110,26 +110,26 @@ public class IngresosController implements Initializable {
             return;
         }
 
-        LocalDate fecha = dpFecha.getValue();
-        String descripcion = txtDescripcion.getText().trim();
-        String tipo = cbTipo.getValue();
-        double valor = Double.parseDouble(txtValor.getText().trim());
+        LocalDate date = dpFecha.getValue();
+        String description = txtDescripcion.getText().trim();
+        String type = cbTipo.getValue();
+        double amount = Double.parseDouble(txtValor.getText().trim());
 
         try {
-            if (selectedIngreso == null) {
-                // Crear
-                Ingreso nuevo = new Ingreso(fecha, descripcion, valor, tipo);
-                ingresoDAO.insert(nuevo);
+            if (selectedIncome == null) {
+                // Create
+                Ingreso newIncome = new Ingreso(date, description, amount, type);
+                ingresoDAO.insert(newIncome);
             } else {
-                // Editar
-                selectedIngreso.setFecha(fecha);
-                selectedIngreso.setDescripcion(descripcion);
-                selectedIngreso.setTipo(tipo);
-                selectedIngreso.setValor(valor);
-                ingresoDAO.update(selectedIngreso);
+                // Edit
+                selectedIncome.setFecha(date);
+                selectedIncome.setDescripcion(description);
+                selectedIncome.setTipo(type);
+                selectedIncome.setValor(amount);
+                ingresoDAO.update(selectedIncome);
             }
 
-            loadIngresosData();
+            loadIncomesData();
             handleLimpiar(null);
         } catch (SQLException e) {
             showErrorAlert("Error al guardar ingreso", e.getMessage());
@@ -138,18 +138,18 @@ public class IngresosController implements Initializable {
 
     @FXML
     private void handleEliminar(ActionEvent event) {
-        if (selectedIngreso == null) return;
+        if (selectedIncome == null) return;
 
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de eliminar este ingreso?");
-        alert.setContentText("Descripción: " + selectedIngreso.getDescripcion() + "\nValor: " + currencyFormat.format(selectedIngreso.getValor()));
+        alert.setContentText("Descripción: " + selectedIncome.getDescripcion() + "\nValor: " + currencyFormat.format(selectedIncome.getValor()));
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                ingresoDAO.delete(selectedIngreso.getId());
-                loadIngresosData();
+                ingresoDAO.delete(selectedIncome.getId());
+                loadIncomesData();
                 handleLimpiar(null);
             } catch (SQLException e) {
                 showErrorAlert("Error al eliminar ingreso", e.getMessage());
@@ -163,7 +163,7 @@ public class IngresosController implements Initializable {
         txtDescripcion.clear();
         cbTipo.setValue(null);
         txtValor.clear();
-        selectedIngreso = null;
+        selectedIncome = null;
         btnEliminar.setVisible(false);
         tblIngresos.getSelectionModel().clearSelection();
     }
@@ -171,12 +171,12 @@ public class IngresosController implements Initializable {
     @FXML
     private void applyFilters(ActionEvent event) {
         String search = txtBuscar.getText();
-        String tipo = cbFiltroTipo.getValue();
+        String type = cbFiltroTipo.getValue();
 
         try {
-            List<Ingreso> filtered = ingresoDAO.findByFilters(null, null, tipo, search);
-            ingresosList.setAll(filtered);
-            tblIngresos.setItems(ingresosList);
+            List<Ingreso> filtered = ingresoDAO.findByFilters(null, null, type, search);
+            incomesList.setAll(filtered);
+            tblIngresos.setItems(incomesList);
         } catch (SQLException e) {
             showErrorAlert("Error al filtrar ingresos", e.getMessage());
         }
@@ -186,14 +186,14 @@ public class IngresosController implements Initializable {
     private void resetFilters(ActionEvent event) {
         txtBuscar.clear();
         cbFiltroTipo.setValue("Todos");
-        loadIngresosData();
+        loadIncomesData();
     }
 
-    private void populateForm(Ingreso ingreso) {
-        dpFecha.setValue(ingreso.getFecha());
-        txtDescripcion.setText(ingreso.getDescripcion());
-        cbTipo.setValue(ingreso.getTipo());
-        txtValor.setText(String.valueOf(ingreso.getValor()));
+    private void populateForm(Ingreso income) {
+        dpFecha.setValue(income.getFecha());
+        txtDescripcion.setText(income.getDescripcion());
+        cbTipo.setValue(income.getTipo());
+        txtValor.setText(String.valueOf(income.getValor()));
         btnEliminar.setVisible(true);
     }
 
@@ -211,8 +211,8 @@ public class IngresosController implements Initializable {
             return false;
         }
         try {
-            double valor = Double.parseDouble(txtValor.getText().trim());
-            if (valor < 0) {
+            double amount = Double.parseDouble(txtValor.getText().trim());
+            if (amount < 0) {
                 showWarningAlert("Formulario Inválido", "El valor del ingreso no puede ser negativo.");
                 return false;
             }

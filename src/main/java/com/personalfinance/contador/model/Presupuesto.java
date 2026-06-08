@@ -4,24 +4,24 @@ import java.time.LocalDate;
 
 public class Presupuesto {
     private int id;
-    private String categoria;
-    private double valorPresupuestado;
-    private LocalDate fechaCreacion;
+    private String category;
+    private double budgetedAmount;
+    private LocalDate creationDate;
 
     public Presupuesto() {
     }
 
-    public Presupuesto(int id, String categoria, double valorPresupuestado, LocalDate fechaCreacion) {
+    public Presupuesto(int id, String category, double budgetedAmount, LocalDate creationDate) {
         this.id = id;
-        this.categoria = categoria;
-        this.valorPresupuestado = valorPresupuestado;
-        this.fechaCreacion = fechaCreacion;
+        this.category = category;
+        this.budgetedAmount = budgetedAmount;
+        this.creationDate = creationDate;
     }
 
-    public Presupuesto(String categoria, double valorPresupuestado, LocalDate fechaCreacion) {
-        this.categoria = categoria;
-        this.valorPresupuestado = valorPresupuestado;
-        this.fechaCreacion = fechaCreacion;
+    public Presupuesto(String category, double budgetedAmount, LocalDate creationDate) {
+        this.category = category;
+        this.budgetedAmount = budgetedAmount;
+        this.creationDate = creationDate;
     }
 
     public int getId() {
@@ -33,36 +33,36 @@ public class Presupuesto {
     }
 
     public String getCategoria() {
-        return categoria;
+        return category;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategoria(String category) {
+        this.category = category;
     }
 
     public double getValorPresupuestado() {
-        return valorPresupuestado;
+        return budgetedAmount;
     }
 
-    public void setValorPresupuestado(double valorPresupuestado) {
-        this.valorPresupuestado = valorPresupuestado;
+    public void setValorPresupuestado(double budgetedAmount) {
+        this.budgetedAmount = budgetedAmount;
     }
 
     public LocalDate getFechaCreacion() {
-        return fechaCreacion;
+        return creationDate;
     }
 
-    public void setFechaCreacion(LocalDate fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFechaCreacion(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override
     public String toString() {
         return "Presupuesto{" +
                 "id=" + id +
-                ", categoria='" + categoria + '\'' +
-                ", valorPresupuestado=" + valorPresupuestado +
-                ", fechaCreacion=" + fechaCreacion +
+                ", category='" + category + '\'' +
+                ", budgetedAmount=" + budgetedAmount +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }

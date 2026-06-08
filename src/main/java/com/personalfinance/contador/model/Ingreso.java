@@ -4,27 +4,27 @@ import java.time.LocalDate;
 
 public class Ingreso {
     private int id;
-    private LocalDate fecha;
-    private String descripcion;
-    private double valor;
-    private String tipo; // Salario, Bonificación, Venta, Freelance, Otros
+    private LocalDate date;
+    private String description;
+    private double amount;
+    private String type; // Salario, Bonificación, Venta, Freelance, Otros
 
     public Ingreso() {
     }
 
-    public Ingreso(int id, LocalDate fecha, String descripcion, double valor, String tipo) {
+    public Ingreso(int id, LocalDate date, String description, double amount, String type) {
         this.id = id;
-        this.fecha = fecha;
-        this.descripcion = descripcion;
-        this.valor = valor;
-        this.tipo = tipo;
+        this.date = date;
+        this.description = description;
+        this.amount = amount;
+        this.type = type;
     }
 
-    public Ingreso(LocalDate fecha, String descripcion, double valor, String tipo) {
-        this.fecha = fecha;
-        this.descripcion = descripcion;
-        this.valor = valor;
-        this.tipo = tipo;
+    public Ingreso(LocalDate date, String description, double amount, String type) {
+        this.date = date;
+        this.description = description;
+        this.amount = amount;
+        this.type = type;
     }
 
     public int getId() {
@@ -36,45 +36,45 @@ public class Ingreso {
     }
 
     public LocalDate getFecha() {
-        return fecha;
+        return date;
     }
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setFecha(LocalDate date) {
+        this.date = date;
     }
 
     public String getDescripcion() {
-        return descripcion;
+        return description;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescripcion(String description) {
+        this.description = description;
     }
 
     public double getValor() {
-        return valor;
+        return amount;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
+    public void setValor(double amount) {
+        this.amount = amount;
     }
 
     public String getTipo() {
-        return tipo;
+        return type;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setTipo(String type) {
+        this.type = type;
     }
 
     @Override
     public String toString() {
         return "Ingreso{" +
                 "id=" + id +
-                ", fecha=" + fecha +
-                ", descripcion='" + descripcion + '\'' +
-                ", valor=" + valor +
-                ", tipo='" + tipo + '\'' +
+                ", date=" + date +
+                ", description='" + description + '\'' +
+                ", amount=" + amount +
+                ", type='" + type + '\'' +
                 '}';
     }
 }
