@@ -22,6 +22,8 @@ public class MainController implements Initializable {
     @FXML
     private Button btnIngresos;
     @FXML
+    private Button btnSavings;
+    @FXML
     private Button btnGastosFijos;
     @FXML
     private Button btnPresupuestos;
@@ -51,6 +53,8 @@ public class MainController implements Initializable {
             navigateTo("gastos.fxml", btnGastos);
         } else if (clickedButton == btnIngresos) {
             navigateTo("ingresos.fxml", btnIngresos);
+        } else if (clickedButton == btnSavings) {
+            navigateTo("savings.fxml", btnSavings);
         } else if (clickedButton == btnGastosFijos) {
             navigateTo("gastos_fijos.fxml", btnGastosFijos);
         } else if (clickedButton == btnPresupuestos) {

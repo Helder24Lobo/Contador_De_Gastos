@@ -15,6 +15,7 @@
             <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Inicio" />
             <Button fx:id="btnGastos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Gastos Diarios" />
             <Button fx:id="btnIngresos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Ingresos" />
+            <Button fx:id="btnSavings" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Ahorros" />
             <Button fx:id="btnGastosFijos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Gastos Fijos" />
             <Button fx:id="btnPresupuestos" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Presupuestos" />
             <Button fx:id="btnReportes" mnemonicParsing="false" onAction="#handleNavigation" styleClass="menu-button" text="Reportes" />
