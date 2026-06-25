@@ -1,0 +1,39 @@
+# ============================================================
+#  INSTRUCCIONES DE EJECUCION RAPIDA
+#  Contador de Gastos - Gestor Financiero Personal
+# ============================================================
+
+== INICIO RAPIDO =============================================
+
+Para ejecutar la aplicacion AHORA MISMO (sin compilar):
+  → Haz DOBLE CLIC en:  ejecutar.bat
+
+Para ejecutar sin ventana de consola:
+  → Haz DOBLE CLIC en:  ContadorGastos.vbs
+
+Acceso directo en el Escritorio (ya creado):
+  → Busca el icono "Contador de Gastos" en tu Escritorio
+
+Ejecutable independiente generado (no necesita Java adicional):
+  → dist\ContadorDeGastos\ContadorDeGastos.exe
+
+== ARCHIVOS CREADOS ==========================================
+
+  compilar-y-ejecutar.bat   -> Compila y lanza la app (1 clic)
+  ejecutar.bat              -> Solo lanza el JAR compilado
+  ContadorGastos.vbs        -> Launcher silencioso (sin consola)
+  crear-acceso-directo.ps1  -> Crea icono en el Escritorio
+  generar-instalador-exe.bat-> Genera ejecutable/instalador .exe
+  dist\ContadorDeGastos\    -> App portable (NO requiere Java)
+
+== REQUISITOS ================================================
+
+  Java JDK 21 instalado en:
+    C:\Program Files\Java\jdk-21.0.10   ✓ (verificado)
+
+  Maven incluido en el proyecto:
+    apache-maven-3.9.6\bin\mvn.cmd      ✓ (incluido)
+
+== MAS INFORMACION ===========================================
+
+  Ver DOCUMENTACION-COMPLETA.md para detalles completos.
