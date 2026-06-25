@@ -9,6 +9,15 @@ CREATE TABLE IF NOT EXISTS incomes (
     tipo TEXT NOT NULL           -- 'Salario', 'Bonificación', 'Venta', 'Freelance', 'Otros'
 );
 
+-- Tabla de savings
+CREATE TABLE IF NOT EXISTS savings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dateCurrent TEXT NOT NULL,  -- Formato ISO-8601 (YYYY-MM-DD)
+    description TEXT NOT NULL,
+    amount REAL NOT NULL CHECK (amount >= 0),
+    priority TEXT NOT NULL          -- 'Salario', 'Bonificación', 'Venta', 'Freelance', 'Otros'
+    );
+
 -- Tabla de expenditures
 CREATE TABLE IF NOT EXISTS expenditures (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

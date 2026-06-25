@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Savings {
 
     private int id;
-    private LocalDate date;
+    private LocalDate dateCurrent;
     private String description;
     private double amount;
     private String priority; //Alta, media, baja.
@@ -13,16 +13,16 @@ public class Savings {
     public Savings() {
     }
 
-    public Savings(int id, LocalDate date, String description,  String priority, double amount) {
+    public Savings(int id, LocalDate dateCurrent, String description, String priority, double amount) {
         this.id = id;
-        this.date = date;
+        this.dateCurrent = dateCurrent;
         this.description = description;
         this.amount = amount;
         this.priority = priority;
     }
 
-    public Savings(LocalDate date, String description, String priority, double amount) {
-        this.date = date;
+    public Savings(LocalDate dateCurrent, String description, String priority, double amount) {
+        this.dateCurrent = dateCurrent;
         this.description = description;
         this.amount = amount;
         this.priority = priority;
@@ -38,12 +38,12 @@ public class Savings {
         this.id = id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getDateCurrent() {
+        return dateCurrent;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateCurrent(LocalDate dateCurrent) {
+        this.dateCurrent = dateCurrent;
     }
 
     public String getDescription() {
@@ -74,7 +74,7 @@ public class Savings {
     public String toString() {
         return "Savings{" +
                 "id=" + id +
-                ", date=" + date +
+                ", date=" + dateCurrent +
                 ", description='" + description + '\'' +
                 ", amount=" + amount +
                 ", priority='" + priority + '\'' +
