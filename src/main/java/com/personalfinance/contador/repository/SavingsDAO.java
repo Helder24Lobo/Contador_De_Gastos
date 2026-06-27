@@ -9,46 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO (Data Access Object) para la entidad {@link Savings}.
- *
- * <p>
- * Proporciona operaciones básicas de persistencia sobre la tabla "savings":
- * insert, update, búsqueda de todos los registros y búsqueda por filtros.
- * Las conexiones a la base de datos se obtienen mediante {@link DatabaseHelper#getConnection()}
- * y siempre se gestionan con try-with-resources para asegurar el cierre de recursos.
- * </p>
- *
- * <p>
- * Notas importantes:
- * - El campo {@code dateCurrent} se almacena/lee como cadena en formato ISO (yyyy-MM-dd).
- * Por tanto se usa {@link LocalDate#toString()} al insertar/actualizar y {@link LocalDate#parse}
- * al leer del ResultSet.
- * - Las consultas usan {@link PreparedStatement} y parámetros enlazados para evitar inyección SQL.
- * </p>
- *
- * @since 1.0
+ * DAO (Data Access Object) para la entidad {@link Savings} (Metas de Ahorro).
  */
 public class SavingsDAO {
+
     /**
-     * Inserta un nuevo registro {@link Savings} en la tabla "savings".
-     *
-     * <p>
-     * Inserta los campos: dateCurrent, description, priority y amount. Después de la ejecución,
-     * si el driver devuelve una clave generada, se asigna a {@code savings.setId(...)}.
-     * </p>
-     *
-     * @param savings objeto {@link Savings} a insertar. Debe contener valores válidos para
-     *                dateCurrent, description, priority y amount.
-     * @throws SQLException si ocurre un error de acceso a la base de datos o al ejecutar la sentencia.
+     * Inserta una nueva meta de ahorro.
      */
     public void insert(Savings savings) throws SQLException {
-        String sql = "INSERT INTO savings (dateCurrent, description, priority, amount) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO savings (name, description, target_value, dateCurrent, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, savings.getDateCurrent().toString());
+            pstmt.setString(1, savings.getName());
             pstmt.setString(2, savings.getDescription());
-            pstmt.setString(3, savings.getPriority());
-            pstmt.setDouble(4, savings.getAmount());
+            pstmt.setDouble(3, savings.getTargetValue());
+            pstmt.setString(4, savings.getDateCurrent().toString());
+            pstmt.setString(5, savings.getStatus());
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
@@ -60,120 +36,89 @@ public class SavingsDAO {
     }
 
     /**
-     * Actualiza un registro existente de {@link Savings} identificado por su id.
-     *
-     * <p>
-     * Actualiza los campos: dateCurrent, description, priority y amount para el registro con el id
-     * proporcionado en {@code savings.getId()}.
-     * </p>
-     *
-     * @param savings objeto {@link Savings} con el id del registro a actualizar y los nuevos valores.
-     * @throws SQLException si ocurre un error de acceso a la base de datos o al ejecutar la sentencia.
+     * Actualiza una meta de ahorro existente.
      */
     public void update(Savings savings) throws SQLException {
-        String sql = "UPDATE savings SET dateCurrent = ?, description = ?, priority = ?, amount = ? WHERE id = ?";
+        String sql = "UPDATE savings SET name = ?, description = ?, target_value = ?, dateCurrent = ?, status = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, savings.getDateCurrent().toString());
+            pstmt.setString(1, savings.getName());
             pstmt.setString(2, savings.getDescription());
-            pstmt.setString(3, savings.getPriority());
-            pstmt.setDouble(4, savings.getAmount());
-            pstmt.setInt(5, savings.getId());
+            pstmt.setDouble(3, savings.getTargetValue());
+            pstmt.setString(4, savings.getDateCurrent().toString());
+            pstmt.setString(5, savings.getStatus());
+            pstmt.setInt(6, savings.getId());
             pstmt.executeUpdate();
         }
     }
 
     /**
-     * Recupera todos los registros de la tabla "savings".
-     *
-     * <p>
-     * Los resultados se devuelven ordenados por {@code dateCurrent} descendente y luego por {@code id} descendente.
-     * </p>
-     *
-     * @return lista de objetos {@link Savings} (vacía si no hay registros).
-     * @throws SQLException si ocurre un error al consultar la base de datos.
+     * Elimina una meta de ahorro y todos sus movimientos (por cascada).
+     */
+    public void delete(int id) throws SQLException {
+        String sql = "DELETE FROM savings WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Recupera todas las metas de ahorro.
      */
     public List<Savings> findAll() throws SQLException {
-        String sql = "SELECT * FROM savings ORDER BY dateCurrent DESC, id DESC";
-        List<Savings> list = new ArrayList<>();
-        try (Connection conn = DatabaseHelper.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                list.add(mapResultSetToSavings(rs));
-            }
-        }
-        return list;
+        return findByFilters(null, null, "Todos", null);
     }
 
     /**
-     * Convierte la fila actual de un {@link ResultSet} en una instancia de {@link Savings}.
-     *
-     * <p>
-     * Asume que las columnas existen y que {@code dateCurrent} está almacenado como cadena en formato ISO (yyyy-MM-dd).
-     * </p>
-     *
-     * @param rs ResultSet posicionado en la fila a mapear.
-     * @return nueva instancia de {@link Savings} con los valores leídos del ResultSet.
-     * @throws SQLException si ocurre un error leyendo las columnas del ResultSet.
+     * Convierte la fila actual de un ResultSet en una instancia de Savings.
      */
     private Savings mapResultSetToSavings(ResultSet rs) throws SQLException {
-        return new Savings(
+        Savings savings = new Savings(
                 rs.getInt("id"),
-                LocalDate.parse(rs.getString("dateCurrent")),
+                rs.getString("name"),
                 rs.getString("description"),
-                rs.getString("priority"),
-                rs.getDouble("amount")
+                rs.getDouble("target_value"),
+                LocalDate.parse(rs.getString("dateCurrent")),
+                rs.getString("status")
         );
+        savings.setSavedAmount(rs.getDouble("saved_amount"));
+        return savings;
     }
 
     /**
-     * Busca registros en la tabla "savings" aplicando filtros opcionales.
-     *
-     * <p>
-     * Filtros soportados:
-     * <ul>
-     *   <li>{@code start} (inclusive): si no es {@code null}, filtra {@code dateCurrent >= start}.</li>
-     *   <li>{@code end} (inclusive): si no es {@code null}, filtra {@code dateCurrent <= end}.</li>
-     *   <li>{@code type}: si no es {@code null}, diferente de "Todos" y no vacío, filtra por {@code priority = type}.</li>
-     *   <li>{@code search}: si no es {@code null} ni vacío, filtra {@code description LIKE '%search%'} (case depending on DB collation).</li>
-     * </ul>
-     * Los parámetros se enlazan con {@link PreparedStatement} para evitar inyección SQL.
-     * </p>
-     *
-     * <p>
-     * El resultado se ordena por {@code dateCurrent} descendente y luego por {@code id} descendente.
-     * </p>
-     *
-     * @param start  fecha de inicio (inclusive) para {@code dateCurrent}. Puede ser {@code null} para no filtrar por inicio.
-     * @param end    fecha final (inclusive) para {@code dateCurrent}. Puede ser {@code null} para no filtrar por fin.
-     * @param type   tipo/priority para filtrar (por ejemplo "Alta", "Media", "Baja"). Si se pasa "Todos" o cadena vacía se ignora.
-     * @param search texto para buscar dentro de {@code description}; se usa LIKE con comodines al inicio y al final.
-     * @return lista de {@link Savings} que cumplen los filtros, posiblemente vacía si no hay coincidencias.
-     * @throws SQLException si ocurre un error al preparar o ejecutar la consulta.
+     * Busca registros aplicando filtros opcionales.
      */
-    public List<Savings> findByFilters(LocalDate start, LocalDate end, String type, String search) throws SQLException {
-        StringBuilder sql = new StringBuilder("SELECT * FROM savings WHERE 1=1");
+    public List<Savings> findByFilters(LocalDate start, LocalDate end, String status, String search) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT s.id, s.name, s.description, s.target_value, s.dateCurrent, s.status, COALESCE(SUM(m.amount), 0) AS saved_amount " +
+                "FROM savings s " +
+                "LEFT JOIN savings_movements m ON s.id = m.saving_id " +
+                "WHERE 1=1"
+        );
         List<Object> params = new ArrayList<>();
 
         if (start != null) {
-            sql.append(" AND dateCurrent >= ?");
+            sql.append(" AND s.dateCurrent >= ?");
             params.add(start.toString());
         }
         if (end != null) {
-            sql.append(" AND dateCurrent <= ?");
+            sql.append(" AND s.dateCurrent <= ?");
             params.add(end.toString());
         }
-        if (type != null && !type.equalsIgnoreCase("Todos") && !type.trim().isEmpty()) {
-            sql.append(" AND priority = ?");
-            params.add(type);
+        if (status != null && !status.equalsIgnoreCase("Todos") && !status.trim().isEmpty()) {
+            sql.append(" AND s.status = ?");
+            params.add(status);
         }
         if (search != null && !search.trim().isEmpty()) {
-            sql.append(" AND description LIKE ?");
-            params.add("%" + search.trim() + "%");
+            sql.append(" AND (s.name LIKE ? OR s.description LIKE ?)");
+            String likeParam = "%" + search.trim() + "%";
+            params.add(likeParam);
+            params.add(likeParam);
         }
 
-        sql.append(" ORDER BY dateCurrent DESC, id DESC");
+        sql.append(" GROUP BY s.id ORDER BY s.dateCurrent DESC, s.id DESC");
 
         List<Savings> list = new ArrayList<>();
         try (Connection conn = DatabaseHelper.getConnection();
@@ -188,5 +133,35 @@ public class SavingsDAO {
             }
         }
         return list;
+    }
+
+    /**
+     * Obtiene el dinero ahorrado total de una meta específica para recálculos rápidos.
+     */
+    public double getSavedAmount(int savingId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(amount), 0) FROM savings_movements WHERE saving_id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, savingId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        }
+        return 0.0;
+    }
+
+    /**
+     * Actualiza el estado de una meta de ahorro.
+     */
+    public void updateStatus(int id, String status) throws SQLException {
+        String sql = "UPDATE savings SET status = ? WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
+        }
     }
 }

@@ -5,31 +5,34 @@ import java.time.LocalDate;
 public class Savings {
 
     private int id;
-    private LocalDate dateCurrent;
+    private String name;
     private String description;
-    private double amount;
-    private String priority; //Alta, media, baja.
+    private double targetValue;
+    private LocalDate dateCurrent; // Fecha de creación
+    private String status; // Activo, Completado
+    private double savedAmount; // Saldo total ahorrado calculado
 
     public Savings() {
     }
 
-    public Savings(int id, LocalDate dateCurrent, String description, String priority, double amount) {
+    public Savings(int id, String name, String description, double targetValue, LocalDate dateCurrent, String status) {
         this.id = id;
-        this.dateCurrent = dateCurrent;
+        this.name = name;
         this.description = description;
-        this.amount = amount;
-        this.priority = priority;
+        this.targetValue = targetValue;
+        this.dateCurrent = dateCurrent;
+        this.status = status;
     }
 
-    public Savings(LocalDate dateCurrent, String description, String priority, double amount) {
-        this.dateCurrent = dateCurrent;
+    public Savings(String name, String description, double targetValue, LocalDate dateCurrent, String status) {
+        this.name = name;
         this.description = description;
-        this.amount = amount;
-        this.priority = priority;
+        this.targetValue = targetValue;
+        this.dateCurrent = dateCurrent;
+        this.status = status;
     }
 
-
-    //GET AND SET
+    // GET AND SET
     public int getId() {
         return id;
     }
@@ -38,12 +41,12 @@ public class Savings {
         this.id = id;
     }
 
-    public LocalDate getDateCurrent() {
-        return dateCurrent;
+    public String getName() {
+        return name;
     }
 
-    public void setDateCurrent(LocalDate dateCurrent) {
-        this.dateCurrent = dateCurrent;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -54,30 +57,62 @@ public class Savings {
         this.description = description;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getTargetValue() {
+        return targetValue;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setTargetValue(double targetValue) {
+        this.targetValue = targetValue;
     }
 
-    public String getPriority() {
-        return priority;
+    public LocalDate getDateCurrent() {
+        return dateCurrent;
     }
 
-    public void setPriority(String priority) {
-        this.priority = priority;
+    public void setDateCurrent(LocalDate dateCurrent) {
+        this.dateCurrent = dateCurrent;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public double getSavedAmount() {
+        return savedAmount;
+    }
+
+    public void setSavedAmount(double savedAmount) {
+        this.savedAmount = savedAmount;
+    }
+
+    // Métodos Calculados
+    public double getRemainingAmount() {
+        double diff = targetValue - savedAmount;
+        return diff < 0 ? 0.0 : diff;
+    }
+
+    public double getProgressPercentage() {
+        if (targetValue <= 0) {
+            return 0.0;
+        }
+        double pct = (savedAmount / targetValue) * 100.0;
+        return pct > 100.0 ? 100.0 : pct;
     }
 
     @Override
     public String toString() {
         return "Savings{" +
                 "id=" + id +
-                ", date=" + dateCurrent +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", amount=" + amount +
-                ", priority='" + priority + '\'' +
+                ", targetValue=" + targetValue +
+                ", dateCurrent=" + dateCurrent +
+                ", status='" + status + '\'' +
+                ", savedAmount=" + savedAmount +
                 '}';
     }
 }

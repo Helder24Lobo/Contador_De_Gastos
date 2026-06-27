@@ -12,11 +12,22 @@ CREATE TABLE IF NOT EXISTS incomes (
 -- Tabla de savings
 CREATE TABLE IF NOT EXISTS savings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    target_value REAL NOT NULL CHECK (target_value >= 0),
     dateCurrent TEXT NOT NULL,  -- Formato ISO-8601 (YYYY-MM-DD)
-    description TEXT NOT NULL,
-    amount REAL NOT NULL CHECK (amount >= 0),
-    priority TEXT NOT NULL          -- 'Salario', 'Bonificación', 'Venta', 'Freelance', 'Otros'
-    );
+    status TEXT NOT NULL DEFAULT 'Activo'
+);
+
+-- Tabla de movimientos de ahorro
+CREATE TABLE IF NOT EXISTS savings_movements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    saving_id INTEGER NOT NULL,
+    amount REAL NOT NULL CHECK (amount > 0),
+    date TEXT NOT NULL,  -- Formato ISO-8601 (YYYY-MM-DD)
+    observation TEXT,
+    FOREIGN KEY (saving_id) REFERENCES savings(id) ON DELETE CASCADE
+);
 
 -- Tabla de expenditures
 CREATE TABLE IF NOT EXISTS expenditures (

@@ -4,58 +4,123 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="15.0" styleClass="content-area" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.personalfinance.contador.controller.SavingsController">
-    <Label styleClass="view-title" text="Registro de Ahorros" />
+    <Label styleClass="view-title" text="Metas de Ahorro" />
 
-    <SplitPane dividerPositions="0.35" style="-fx-background-color: transparent; -fx-box-border: transparent;" VBox.vgrow="ALWAYS">
-        <!-- Formulario (Izquierda) -->
-        <VBox spacing="15.0" styleClass="card-balance" style="-fx-pref-width: 320px;">
-            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Datos del Ahorro" />
+    <SplitPane dividerPositions="0.33" style="-fx-background-color: transparent; -fx-box-border: transparent;" VBox.vgrow="ALWAYS">
+        <!-- Contenedor Lateral (Izquierda) -->
+        <StackPane style="-fx-pref-width: 320px;">
+            <!-- Formulario de Creación/Edición -->
+            <VBox fx:id="paneForm" spacing="15.0" styleClass="card-balance">
+                <Label fx:id="lblFormTitle" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Crear Ahorro" />
+                
+                <GridPane vgap="12.0" hgap="10.0">
+                    <columnConstraints>
+                        <javafx.scene.layout.ColumnConstraints minWidth="100" />
+                    </columnConstraints>
+                    
+                    <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <DatePicker fx:id="dpDate" prefWidth="200.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                    
+                    <Label text="Nombre:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtName" prefWidth="200.0" promptText="Ej: Comprar portátil" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                    
+                    <Label text="Descripción:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtDescription" prefWidth="200.0" promptText="Opcional..." GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                    
+                    <Label text="Valor Objetivo:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtTargetValue" prefWidth="200.0" promptText="0.00" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                    
+                    <Label text="Estado:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                    <ComboBox fx:id="cbStatus" prefWidth="200.0" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+                </GridPane>
+                
+                <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                    <Button fx:id="btnClear" mnemonicParsing="false" onAction="#handleClear" styleClass="btn-secondary" text="Limpiar" />
+                    <Button fx:id="btnSave" mnemonicParsing="false" onAction="#handleSave" styleClass="btn-primary" text="Guardar" />
+                </HBox>
+                <HBox fx:id="hbEditActions" spacing="10.0" alignment="CENTER_RIGHT" visible="false" managed="false">
+                    <Button mnemonicParsing="false" onAction="#handleCancelEdit" styleClass="btn-secondary" text="Cancelar" />
+                </HBox>
+            </VBox>
             
-            <GridPane vgap="12.0" hgap="10.0">
-                <columnConstraints>
-                    <javafx.scene.layout.ColumnConstraints minWidth="100" />
-                </columnConstraints>
+            <!-- Panel de Detalles y Resumen -->
+            <VBox fx:id="paneDetail" spacing="15.0" styleClass="card-balance" visible="false">
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3f72af;" text="Resumen del Ahorro" />
                 
-                <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-                <DatePicker fx:id="dpDate" prefWidth="200.0" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                <VBox spacing="8.0" style="-fx-padding: 5 0 5 0;" VBox.vgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Nombre:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailName" style="-fx-text-fill: #2d3748;" wrapText="true" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Descripción:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailDescription" style="-fx-text-fill: #2d3748;" wrapText="true" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Objetivo:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailTarget" style="-fx-text-fill: #2d3748;" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Ahorrado:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailSaved" style="-fx-text-fill: #38a169; -fx-font-weight: bold;" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Faltante:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailRemaining" style="-fx-text-fill: #e53e3e; -fx-font-weight: bold;" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Porcentaje:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailPercentage" style="-fx-text-fill: #2b6cb0; -fx-font-weight: bold;" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label text="Estado:" style="-fx-font-weight: bold;" />
+                        <Label fx:id="lblDetailStatus" style="-fx-font-weight: bold;" />
+                    </HBox>
+                    
+                    <!-- Barra de progreso -->
+                    <VBox spacing="4.0" style="-fx-padding: 5 0 5 0;">
+                        <ProgressBar fx:id="pbDetailProgress" prefWidth="280.0" progress="0.0" />
+                    </VBox>
+                    
+                    <!-- Alerta de Meta Completada -->
+                    <HBox fx:id="hbSuccessAlert" spacing="8.0" alignment="CENTER_LEFT" style="-fx-background-color: rgba(56, 161, 105, 0.15); -fx-border-color: #38a169; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8;" visible="false" managed="false">
+                        <Label text="🎉" style="-fx-font-size: 16px;" />
+                        <Label text="¡Felicidades! Meta completada con éxito." style="-fx-text-fill: #276749; -fx-font-weight: bold; -fx-font-size: 11px;" wrapText="true" />
+                    </HBox>
+                </VBox>
                 
-                <Label text="Descripción:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-                <TextField fx:id="txtDescription" prefWidth="200.0" promptText="Ej: Pago de nómina" GridPane.rowIndex="1" GridPane.columnIndex="1" />
-                
-                <Label text="Prioridad:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
-                <ComboBox fx:id="cbPriority" prefWidth="200.0" GridPane.rowIndex="2" GridPane.columnIndex="1" />
-                
-                <Label text="Valor:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
-                <TextField fx:id="txtValor" prefWidth="200.0" promptText="0.00" GridPane.rowIndex="3" GridPane.columnIndex="1" />
-            </GridPane>
-            
-            <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-                <Button fx:id="btnClear" mnemonicParsing="false" onAction="#handleClear" styleClass="btn-secondary" text="Limpiar" />
-                <Button fx:id="btnSave" mnemonicParsing="false" onAction="#handleSave" styleClass="btn-primary" text="Guardar" />
-            </HBox>
-            <HBox spacing="10.0" alignment="CENTER_RIGHT">
-                <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#handleClear" styleClass="btn-danger" text="Eliminar" visible="false" />
-            </HBox>
-        </VBox>
+                <VBox spacing="10.0" alignment="CENTER">
+                    <Button fx:id="btnAbonar" mnemonicParsing="false" onAction="#handleOpenAbonarDialog" styleClass="btn-primary" text="Abonar dinero" prefWidth="260.0" />
+                    <Button fx:id="btnHistory" mnemonicParsing="false" onAction="#handleOpenHistoryDialog" styleClass="btn-secondary" text="Historial de movimientos" prefWidth="260.0" />
+                    <HBox spacing="10.0" alignment="CENTER">
+                        <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#handleStartEdit" styleClass="btn-secondary" text="Editar Meta" prefWidth="125.0" />
+                        <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#handleDelete" styleClass="btn-danger" text="Eliminar" prefWidth="125.0" />
+                    </HBox>
+                    <Button mnemonicParsing="false" onAction="#handleClearSelection" styleClass="btn-secondary" text="Limpiar Selección" prefWidth="260.0" />
+                </VBox>
+            </VBox>
+        </StackPane>
 
         <!-- Tabla y Filtros (Derecha) -->
         <VBox spacing="10.0" style="-fx-padding: 0 0 0 15;">
             <!-- Controles de Filtros -->
             <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="card-balance" style="-fx-pref-height: 60px; -fx-padding: 10;">
                 <Label text="Buscar:" />
-                <TextField fx:id="txtSearch" promptText="Buscar por descripción..." prefWidth="180.0" />
+                <TextField fx:id="txtSearch" promptText="Buscar por nombre..." prefWidth="180.0" />
                 
-                <Label text="Prioridad:" />
-                <ComboBox fx:id="cbFilterPriority" prefWidth="130.0" />
+                <Label text="Estado:" />
+                <ComboBox fx:id="cbFilterStatus" prefWidth="130.0" />
                 
                 <Button mnemonicParsing="false" onAction="#applyFilters" styleClass="btn-primary" text="Filtrar" />
                 <Button mnemonicParsing="false" onAction="#resetFilters" styleClass="btn-secondary" text="Reset" />
@@ -64,11 +129,14 @@
             <!-- Tabla de Ahorros -->
             <TableView fx:id="tblSavings" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
-                    <TableColumn fx:id="colDate" prefWidth="120.0" text="Fecha" />
-                    <TableColumn fx:id="colDescription" prefWidth="280.0" text="Descripción" />
-                    <TableColumn fx:id="colPriority" prefWidth="150.0" text="Prioridad" />
-                    <TableColumn fx:id="colValue" prefWidth="150.0" text="Valor" />
+                    <TableColumn fx:id="colId" prefWidth="40.0" text="ID" />
+                    <TableColumn fx:id="colName" prefWidth="130.0" text="Nombre" />
+                    <TableColumn fx:id="colTargetValue" prefWidth="110.0" text="Objetivo" />
+                    <TableColumn fx:id="colSavedValue" prefWidth="110.0" text="Ahorrado" />
+                    <TableColumn fx:id="colRemainingValue" prefWidth="110.0" text="Faltante" />
+                    <TableColumn fx:id="colProgressPercent" prefWidth="70.0" text="Avance %" />
+                    <TableColumn fx:id="colProgressBar" prefWidth="110.0" text="Progreso" />
+                    <TableColumn fx:id="colStatus" prefWidth="90.0" text="Estado" />
                 </columns>
             </TableView>
         </VBox>
