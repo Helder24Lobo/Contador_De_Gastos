@@ -37,6 +37,8 @@ public class ExpensesController implements Initializable {
     private Label lblTotalMes;
     @FXML
     private Label lblTotalAnio;
+    @FXML
+    private Label lblTotalGastosLista;
 
     @FXML
     private DatePicker dpFecha;
@@ -132,6 +134,8 @@ public class ExpensesController implements Initializable {
         });
 
         dpFecha.setValue(LocalDate.now());
+
+        expensesList.addListener((javafx.collections.ListChangeListener<Expenditure>) c -> updateTotalGastosLista());
 
         // Load Data
         loadExpensesData();
@@ -343,5 +347,10 @@ public class ExpensesController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void updateTotalGastosLista() {
+        double total = expensesList.stream().mapToDouble(Expenditure::getValor).sum();
+        lblTotalGastosLista.setText(currencyFormat.format(total));
     }
 }

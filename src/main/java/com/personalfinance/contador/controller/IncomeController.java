@@ -43,6 +43,8 @@ public class IncomeController implements Initializable {
     private TextField txtBuscar;
     @FXML
     private ComboBox<String> cbFiltroTipo;
+    @FXML
+    private Label lblTotalIngresosLista;
 
     @FXML
     private TableView<Income> tblIngresos;
@@ -105,6 +107,8 @@ public class IncomeController implements Initializable {
         });
 
         dpFecha.setValue(LocalDate.now());
+
+        incomesList.addListener((javafx.collections.ListChangeListener<Income>) c -> updateTotalIngresosLista());
 
         loadIncomesData();
     }
@@ -252,5 +256,10 @@ public class IncomeController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void updateTotalIngresosLista() {
+        double total = incomesList.stream().mapToDouble(Income::getValor).sum();
+        lblTotalIngresosLista.setText(currencyFormat.format(total));
     }
 }

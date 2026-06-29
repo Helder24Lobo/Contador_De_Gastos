@@ -139,6 +139,9 @@
                     <TableColumn fx:id="colStatus" prefWidth="90.0" text="Estado" />
                 </columns>
             </TableView>
+            <HBox spacing="15.0" alignment="CENTER_RIGHT" style="-fx-padding: 5 10 5 10;">
+                <Label fx:id="lblTotalSavingsLista" text="Total Objetivo: \$0.00 | Total Ahorrado: \$0.00 | Total Faltante: \$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2b6cb0;"/>
+            </HBox>
         </VBox>
     </SplitPane>
 </VBox>

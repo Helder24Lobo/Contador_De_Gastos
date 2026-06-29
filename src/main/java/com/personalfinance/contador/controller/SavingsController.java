@@ -86,6 +86,8 @@ public class SavingsController implements Initializable {
     @FXML
     private ComboBox<String> cbFilterStatus;
     @FXML
+    private Label lblTotalSavingsLista;
+    @FXML
     private TableView<Savings> tblSavings;
     @FXML
     private TableColumn<Savings, Number> colId;
@@ -181,6 +183,8 @@ public class SavingsController implements Initializable {
         });
 
         dpDate.setValue(LocalDate.now());
+
+        savingsList.addListener((javafx.collections.ListChangeListener<Savings>) c -> updateTotalSavingsLista());
 
         // Cargar datos
         loadSavingsData();
@@ -659,5 +663,14 @@ public class SavingsController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void updateTotalSavingsLista() {
+        double totalObjetivo = savingsList.stream().mapToDouble(Savings::getTargetValue).sum();
+        double totalAhorrado = savingsList.stream().mapToDouble(Savings::getSavedAmount).sum();
+        double totalFaltante = savingsList.stream().mapToDouble(Savings::getRemainingAmount).sum();
+        lblTotalSavingsLista.setText("Total Objetivo: " + currencyFormat.format(totalObjetivo) +
+                                     " | Total Ahorrado: " + currencyFormat.format(totalAhorrado) +
+                                     " | Total Faltante: " + currencyFormat.format(totalFaltante));
     }
 }

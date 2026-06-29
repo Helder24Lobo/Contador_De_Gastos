@@ -111,6 +111,10 @@
                     <TableColumn fx:id="colObservacion" prefWidth="150.0" text="Observación"/>
                 </columns>
             </TableView>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 5 10 5 10;">
+                <Label text="Total en Lista: " style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <Label fx:id="lblTotalGastosLista" text="\$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #e53e3e;"/>
+            </HBox>
         </VBox>
     </SplitPane>
 </VBox>

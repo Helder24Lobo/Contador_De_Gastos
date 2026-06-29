@@ -30,6 +30,8 @@ public class FixedExpensesController implements Initializable {
     private Label lblTotalFijos;
     @FXML
     private Label lblPorcentajeIngresos;
+    @FXML
+    private Label lblTotalFijosLista;
 
     @FXML
     private TextField txtNombre;
@@ -97,6 +99,8 @@ public class FixedExpensesController implements Initializable {
                 populateForm(selectedFixedExpense);
             }
         });
+
+        fixedExpensesList.addListener((javafx.collections.ListChangeListener<FixedExpense>) c -> updateTotalFijosLista());
 
         loadFixedExpensesData();
     }
@@ -254,5 +258,10 @@ public class FixedExpensesController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void updateTotalFijosLista() {
+        double total = fixedExpensesList.stream().mapToDouble(FixedExpense::getValor).sum();
+        lblTotalFijosLista.setText(currencyFormat.format(total));
     }
 }

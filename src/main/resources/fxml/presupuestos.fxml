@@ -51,6 +51,9 @@
                     <TableColumn fx:id="colConsumo" prefWidth="220.0" text="Consumo (%)" />
                 </columns>
             </TableView>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 5 10 5 10;">
+                <Label fx:id="lblTotalPresupuestosLista" text="Total Presupuestado: \$0.00 | Total Gastado: \$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #3182ce;"/>
+            </HBox>
         </VBox>
     </SplitPane>
 </VBox>

@@ -70,6 +70,10 @@
                     <TableColumn fx:id="colEstado" prefWidth="120.0" text="Estado" />
                 </columns>
             </TableView>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 5 10 5 10;">
+                <Label text="Total en Lista: " style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <Label fx:id="lblTotalFijosLista" text="\$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #d69e2e;"/>
+            </HBox>
         </VBox>
     </SplitPane>
 </VBox>

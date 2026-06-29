@@ -41,6 +41,8 @@ public class BudgetsController implements Initializable {
     @FXML
     private TableView<Specifications> tblPresupuestos;
     @FXML
+    private Label lblTotalPresupuestosLista;
+    @FXML
     private TableColumn<Specifications, String> colCategoria;
     @FXML
     private TableColumn<Specifications, Number> colPresupuesto;
@@ -138,6 +140,8 @@ public class BudgetsController implements Initializable {
                 populateForm(selectedBudget);
             }
         });
+
+        budgetsList.addListener((javafx.collections.ListChangeListener<Specifications>) c -> updateTotalPresupuestosLista());
 
         loadBudgetsData();
     }
@@ -254,5 +258,18 @@ public class BudgetsController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void updateTotalPresupuestosLista() {
+        double totalPresupuestado = budgetsList.stream().mapToDouble(Specifications::getValorPresupuestado).sum();
+        double totalGastado = budgetsList.stream().mapToDouble(b -> {
+            try {
+                return budgetService.getCategoryConsumption(b.getCategoria()).getTotalGastado();
+            } catch (SQLException e) {
+                return 0.0;
+            }
+        }).sum();
+        lblTotalPresupuestosLista.setText("Total Presupuestado: " + currencyFormat.format(totalPresupuestado) +
+                                          "  |  Total Gastado: " + currencyFormat.format(totalGastado));
     }
 }
