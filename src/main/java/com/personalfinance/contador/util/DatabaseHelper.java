@@ -142,6 +142,62 @@ public class DatabaseHelper {
                 }
             }
             System.out.println("Database initialized successfully (Tables and Indexes validated).");
+
+            // Migration: Transfer budgets from old specifications/presupuestos table to gastos_fijos
+            try {
+                String tableToMigrate = null;
+                try (ResultSet rs = conn.getMetaData().getTables(null, null, "specifications", null)) {
+                    if (rs.next()) {
+                        tableToMigrate = "specifications";
+                    }
+                }
+                if (tableToMigrate == null) {
+                    try (ResultSet rs = conn.getMetaData().getTables(null, null, "presupuestos", null)) {
+                        if (rs.next()) {
+                            tableToMigrate = "presupuestos";
+                        }
+                    }
+                }
+
+                if (tableToMigrate != null) {
+                    System.out.println("Found budget table: " + tableToMigrate + ". Migrating contents to fixed expenses...");
+                    String selectSql = "SELECT categoria, valor_presupuestado FROM " + tableToMigrate;
+                    try (Statement selectStmt = conn.createStatement();
+                         ResultSet rsBudgets = selectStmt.executeQuery(selectSql)) {
+
+                        String insertSql = "INSERT INTO gastos_fijos (nombre, valor, dia_cobro, estado) VALUES (?, ?, 1, 'Por pagar')";
+                        try (PreparedStatement insertPstmt = conn.prepareStatement(insertSql)) {
+                            while (rsBudgets.next()) {
+                                String category = rsBudgets.getString("categoria");
+                                double amount = rsBudgets.getDouble("valor_presupuestado");
+
+                                insertPstmt.setString(1, category);
+                                insertPstmt.setDouble(2, amount);
+                                insertPstmt.executeUpdate();
+                            }
+                        }
+                    }
+
+                    try (Statement dropStmt = conn.createStatement()) {
+                        dropStmt.execute("DROP TABLE " + tableToMigrate);
+                        System.out.println("Budget table " + tableToMigrate + " migrated and dropped successfully.");
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Error migrating budgets to fixed expenses: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            // Migration: Convert old fixed expense statuses (Activo -> Por pagar, Inactivo -> Pagado)
+            try {
+                try (Statement updateStmt = conn.createStatement()) {
+                    updateStmt.executeUpdate("UPDATE gastos_fijos SET estado = 'Por pagar' WHERE estado = 'Activo'");
+                    updateStmt.executeUpdate("UPDATE gastos_fijos SET estado = 'Pagado' WHERE estado = 'Inactivo'");
+                }
+            } catch (SQLException e) {
+                System.err.println("Error migrating fixed expenses status values: " + e.getMessage());
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             System.err.println("Error initializing the SQLite database: " + e.getMessage());
             e.printStackTrace();

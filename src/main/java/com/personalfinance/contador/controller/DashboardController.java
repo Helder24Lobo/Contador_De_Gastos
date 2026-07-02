@@ -2,14 +2,9 @@ package com.personalfinance.contador.controller;
 
 import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.model.Income;
-import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
-import com.personalfinance.contador.repository.PresupuestoDAO;
-import com.personalfinance.contador.service.BudgetService;
-import com.personalfinance.contador.service.BudgetService.BudgetReport;
-import com.personalfinance.contador.service.BudgetService.BudgetStatus;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,15 +36,10 @@ public class DashboardController implements Initializable {
     @FXML
     private Label lblMovimientosCount;
     @FXML
-    private VBox vboxAlertas;
-    @FXML
     private PieChart chartGastos;
-
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();
     private final GastoFijoDAO gastoFijoDAO = new GastoFijoDAO();
-    private final PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
-    private final BudgetService budgetService = new BudgetService();
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
 
@@ -92,9 +82,6 @@ public class DashboardController implements Initializable {
             // 3. Load Expense by Category Chart
             loadPieChart(startOfMonth, endOfMonth);
 
-            // 4. Load Budget Alerts
-            loadBudgetAlerts();
-
         } catch (SQLException e) {
             System.err.println("Error loading dashboard data: " + e.getMessage());
             e.printStackTrace();
@@ -116,48 +103,4 @@ public class DashboardController implements Initializable {
             pieChartData.add(new PieChart.Data(entry.getKey() + " (" + currencyFormat.format(entry.getValue()) + ")", entry.getValue()));
         }
         chartGastos.setData(pieChartData);
-    }
-
-    private void loadBudgetAlerts() throws SQLException {
-        vboxAlertas.getChildren().clear();
-        List<Specifications> budgets = presupuestoDAO.findAll();
-
-        boolean hasAlerts = false;
-
-        for (Specifications budget : budgets) {
-            BudgetReport report = budgetService.getCategoryConsumption(budget.getCategoria());
-            if (report.getStatus() == BudgetStatus.CRITICAL_100) {
-                hasAlerts = true;
-                createAlertNode("CRÍTICO", "Has superado el 100% del presupuesto para '" + budget.getCategoria() +
-                        "'. Consumo: " + String.format("%.1f", report.getPorcentajeConsumido()) + "% (" +
-                        currencyFormat.format(report.getTotalGastado()) + " de " + currencyFormat.format(report.getPresupuestoDefinido()) + ")", "budget-alert-critical");
-            } else if (report.getStatus() == BudgetStatus.WARNING_80) {
-                hasAlerts = true;
-                createAlertNode("ADVERTENCIA", "Has consumido más del 80% del presupuesto para '" + budget.getCategoria() +
-                        "'. Consumo: " + String.format("%.1f", report.getPorcentajeConsumido()) + "% (" +
-                        currencyFormat.format(report.getTotalGastado()) + " de " + currencyFormat.format(report.getPresupuestoDefinido()) + ")", "budget-alert-warning");
-            }
-        }
-
-        if (!hasAlerts) {
-            Label noAlerts = new Label("Todos tus presupuestos están dentro de los límites saludables.");
-            noAlerts.setStyle("-fx-text-fill: #48bb78; -fx-font-weight: bold; -fx-font-size: 13px;");
-            vboxAlertas.getChildren().add(noAlerts);
-        }
-    }
-
-    private void createAlertNode(String level, String message, String cssClass) {
-        VBox alertBox = new VBox();
-        alertBox.getStyleClass().add(cssClass);
-        alertBox.setSpacing(5);
-
-        Label lblTitle = new Label(level + ": Presupuesto Excedido");
-        lblTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
-
-        Label lblMsg = new Label(message);
-        lblMsg.setWrapText(true);
-
-        alertBox.getChildren().addAll(lblTitle, lblMsg);
-        vboxAlertas.getChildren().add(alertBox);
-    }
-}
+    }}

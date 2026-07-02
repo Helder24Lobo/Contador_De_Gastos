@@ -77,7 +77,7 @@ public class GastoFijoDAO {
     }
 
     public double getTotalGastosFijosActivos() throws SQLException {
-        String sql = "SELECT SUM(valor) FROM gastos_fijos WHERE estado = 'Activo'";
+        String sql = "SELECT SUM(valor) FROM gastos_fijos";
         try (Connection conn = DatabaseHelper.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

@@ -136,6 +136,21 @@
     -fx-text-fill: #ffffff;
 }
 
+.table-row-cell.pagado {
+    -fx-background-color: #c6f6d5;
+    -fx-text-fill: #22543d;
+}
+.table-row-cell.pagado:hover {
+    -fx-background-color: #b2f5ea;
+}
+.table-row-cell.por-pagar {
+    -fx-background-color: #fed7d7;
+    -fx-text-fill: #742a2a;
+}
+.table-row-cell.por-pagar:hover {
+    -fx-background-color: #feb2b2;
+}
+
 /* Formularios y Controles */
 .label {
     -fx-text-fill: #4a5568;

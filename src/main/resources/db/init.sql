@@ -45,15 +45,7 @@ CREATE TABLE IF NOT EXISTS gastos_fijos (
     nombre TEXT NOT NULL,
     valor REAL NOT NULL CHECK (valor >= 0),
     dia_cobro INTEGER NOT NULL CHECK (dia_cobro BETWEEN 1 AND 31),
-    estado TEXT NOT NULL DEFAULT 'Activo' -- 'Activo' o 'Inactivo'
-);
-
--- Tabla de specifications
-CREATE TABLE IF NOT EXISTS specifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    categoria TEXT NOT NULL UNIQUE,
-    valor_presupuestado REAL NOT NULL CHECK (valor_presupuestado >= 0),
-    fecha_creacion TEXT NOT NULL
+    estado TEXT NOT NULL DEFAULT 'Por pagar' -- 'Pagado' o 'Por pagar'
 );
 
 -- Índices para mejorar el rendimiento de consultas por fecha y filtros

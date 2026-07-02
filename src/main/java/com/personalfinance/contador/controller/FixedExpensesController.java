@@ -70,8 +70,8 @@ public class FixedExpensesController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cbEstado.setItems(FXCollections.observableArrayList("Activo", "Inactivo"));
-        cbEstado.setValue("Activo");
+        cbEstado.setItems(FXCollections.observableArrayList("Pagado", "Por pagar"));
+        cbEstado.setValue("Por pagar");
 
         // Configure Table Columns
         colId.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()));
@@ -88,6 +88,24 @@ public class FixedExpensesController implements Initializable {
                     setText(null);
                 } else {
                     setText(currencyFormat.format(item.doubleValue()));
+                }
+            }
+        });
+
+        // Row styling depending on paid/unpaid status
+        tblGastosFijos.setRowFactory(tv -> new TableRow<FixedExpense>() {
+            @Override
+            protected void updateItem(FixedExpense item, boolean empty) {
+                super.updateItem(item, empty);
+                getStyleClass().removeAll("pagado", "por-pagar");
+                if (item == null || empty) {
+                    // Keep default styles
+                } else {
+                    if ("Pagado".equalsIgnoreCase(item.getEstado())) {
+                        getStyleClass().add("pagado");
+                    } else if ("Por pagar".equalsIgnoreCase(item.getEstado())) {
+                        getStyleClass().add("por-pagar");
+                    }
                 }
             }
         });
@@ -198,7 +216,7 @@ public class FixedExpensesController implements Initializable {
         txtNombre.clear();
         txtValor.clear();
         txtDiaCobro.clear();
-        cbEstado.setValue("Activo");
+        cbEstado.setValue("Por pagar");
         selectedFixedExpense = null;
         btnEliminar.setVisible(false);
         tblGastosFijos.getSelectionModel().clearSelection();

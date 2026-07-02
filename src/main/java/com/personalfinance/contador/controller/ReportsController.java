@@ -3,11 +3,9 @@ package com.personalfinance.contador.controller;
 import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.model.FixedExpense;
 import com.personalfinance.contador.model.Income;
-import com.personalfinance.contador.model.Specifications;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
-import com.personalfinance.contador.repository.PresupuestoDAO;
 import com.personalfinance.contador.service.ExcelExportService;
 import com.personalfinance.contador.service.PdfReportService;
 import javafx.collections.FXCollections;
@@ -40,7 +38,6 @@ public class ReportsController implements Initializable {
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();
     private final GastoFijoDAO gastoFijoDAO = new GastoFijoDAO();
-    private final PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
 
     private final String[] rangosRapidos = {
             "Diario", "Semanal", "Mensual", "Anual", "Personalizado"
@@ -138,10 +135,8 @@ public class ReportsController implements Initializable {
                 List<Income> incomes = ingresoDAO.findByFilters(desde, hasta, null, null);
                 List<Expenditure> expenditures = gastoDAO.findByFilters(desde, hasta, null, null);
                 List<FixedExpense> fijos = gastoFijoDAO.findAll();
-                List<Specifications> specifications = presupuestoDAO.findAll();
-
                 String tituloReporte = "Reporte Financiero (" + cbRangoRapido.getValue() + ")";
-                PdfReportService.generateFinancialReport(file.getAbsolutePath(), tituloReporte, desde, hasta, incomes, expenditures, fijos, specifications);
+                PdfReportService.generateFinancialReport(file.getAbsolutePath(), tituloReporte, desde, hasta, incomes, expenditures, fijos);
 
                 showSuccessAlert("Exportación Completa", "El reporte en PDF se ha guardado correctamente en:\n" + file.getAbsolutePath());
             } catch (Exception e) {

@@ -39,7 +39,7 @@
 
         <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e53e3e;" text="Zona Peligrosa"/>
         <Label style="-fx-text-fill: #718096; -fx-font-size: 12px;"
-               text="Esta acción eliminará de forma permanente todos los registros de incomes, expenditures diarios, expenditures fijos y specifications."/>
+               text="Esta acción eliminará de forma permanente todos los registros de ingresos, gastos diarios y gastos fijos."/>
 
         <HBox>
             <Button mnemonicParsing="false" onAction="#handleRestablecerBaseDatos" styleClass="btn-danger"

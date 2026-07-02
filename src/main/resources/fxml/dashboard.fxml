@@ -38,10 +38,6 @@
             <Label fx:id="lblMovimientosCount" text="0"/>
         </HBox>
 
-        <!-- Contenedor de Alertas de Presupuesto -->
-        <VBox fx:id="vboxAlertas" spacing="8.0">
-            <!-- Se poblará dinámicamente desde el controlador -->
-        </VBox>
 
         <!-- Gráficas y Resumen de Categorías -->
         <HBox spacing="20.0">

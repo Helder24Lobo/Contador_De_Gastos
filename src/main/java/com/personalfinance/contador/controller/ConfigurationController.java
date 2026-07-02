@@ -3,7 +3,6 @@ package com.personalfinance.contador.controller;
 import com.personalfinance.contador.repository.GastoDAO;
 import com.personalfinance.contador.repository.GastoFijoDAO;
 import com.personalfinance.contador.repository.IngresoDAO;
-import com.personalfinance.contador.repository.PresupuestoDAO;
 import com.personalfinance.contador.service.BackupService;
 import com.personalfinance.contador.util.ConfigManager;
 import javafx.collections.FXCollections;
@@ -31,7 +30,6 @@ public class ConfigurationController implements Initializable {
     private final IngresoDAO ingresoDAO = new IngresoDAO();
     private final GastoDAO gastoDAO = new GastoDAO();
     private final GastoFijoDAO gastoFijoDAO = new GastoFijoDAO();
-    private final PresupuestoDAO presupuestoDAO = new PresupuestoDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -88,7 +86,7 @@ public class ConfigurationController implements Initializable {
         Alert alertConfirm = new Alert(AlertType.CONFIRMATION);
         alertConfirm.setTitle("Confirmar Restauración de Datos");
         alertConfirm.setHeaderText("¡Atención! Se reemplazarán todos los datos actuales");
-        alertConfirm.setContentText("Al importar otra base de datos, se sobrescribirán los ingresos, gastos y presupuestos actuales.\n\n¿Deseas continuar?");
+        alertConfirm.setContentText("Al importar otra base de datos, se sobrescribirán los ingresos, gastos y gastos fijos actuales.\n\n¿Deseas continuar?");
 
         Optional<ButtonType> opt = alertConfirm.showAndWait();
         if (opt.isPresent() && opt.get() == ButtonType.OK) {
@@ -126,7 +124,6 @@ public class ConfigurationController implements Initializable {
                 ingresoDAO.clearAll();
                 gastoDAO.clearAll();
                 gastoFijoDAO.clearAll();
-                presupuestoDAO.clearAll();
 
                 showSuccessAlert("Restablecimiento Completado", "Todos los datos han sido borrados de la aplicación.");
 

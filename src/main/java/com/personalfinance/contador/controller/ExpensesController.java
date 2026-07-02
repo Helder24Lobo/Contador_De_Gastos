@@ -2,9 +2,6 @@ package com.personalfinance.contador.controller;
 
 import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.repository.GastoDAO;
-import com.personalfinance.contador.service.BudgetService;
-import com.personalfinance.contador.service.BudgetService.BudgetReport;
-import com.personalfinance.contador.service.BudgetService.BudgetStatus;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -82,7 +79,6 @@ public class ExpensesController implements Initializable {
     private TableColumn<Expenditure, String> colObservacion;
 
     private final GastoDAO gastoDAO = new GastoDAO();
-    private final BudgetService budgetService = new BudgetService();
     private final ObservableList<Expenditure> expensesList = FXCollections.observableArrayList();
     private Expenditure selectedExpense = null;
 
@@ -195,28 +191,6 @@ public class ExpensesController implements Initializable {
         String note = txtObservacion.getText().trim();
 
         try {
-            // Validate budget and emit alerts if necessary
-            BudgetReport report = budgetService.checkNewExpense(category, amount);
-            if (report.getStatus() == BudgetStatus.CRITICAL_100) {
-                Alert alert = new Alert(AlertType.WARNING);
-                alert.setTitle("Límite de Presupuesto Excedido");
-                alert.setHeaderText("¡Presupuesto Agotado!");
-                alert.setContentText("El gasto que intentas guardar supera el 100% de tu presupuesto en la categoría '" + category + "'.\n" +
-                        "Presupuesto: " + currencyFormat.format(report.getPresupuestoDefinido()) + "\n" +
-                        "Gastado + Nuevo Gasto: " + currencyFormat.format(report.getTotalGastado() + amount) + "\n\n" +
-                        "¿Deseas registrar este gasto de todos modos?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.CANCEL) {
-                    return; // Abort insertion
-                }
-            } else if (report.getStatus() == BudgetStatus.WARNING_80) {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Advertencia de Presupuesto");
-                alert.setHeaderText("Consumo cercano al límite (>=80%)");
-                alert.setContentText("Al guardar este gasto, habrás consumido el " + String.format("%.1f", report.getPorcentajeConsumido()) + "% de tu presupuesto en la categoría '" + category + "'.");
-                alert.showAndWait();
-            }
 
             if (selectedExpense == null) {
                 // Create

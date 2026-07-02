@@ -147,7 +147,7 @@ public class ExcelExportService {
         // Calculations
         double totalIncomes = incomes.stream().mapToDouble(Income::getValor).sum();
         double totalExpenses = expenses.stream().mapToDouble(Expenditure::getValor).sum();
-        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(FixedExpense::getValor).sum();
+        double totalFixed = fixedExpenses.stream().mapToDouble(FixedExpense::getValor).sum();
         double netBalance = totalIncomes - totalExpenses - totalFixed;
 
         // Write Balance Cards
@@ -164,7 +164,7 @@ public class ExcelExportService {
         expenseCell.setCellStyle(currencyStyle);
 
         Row fixedRow = sheet.createRow(rowNum++);
-        fixedRow.createCell(0).setCellValue("Gastos Fijos Activos:");
+        fixedRow.createCell(0).setCellValue("Gastos Fijos:");
         Cell fixedCell = fixedRow.createCell(1);
         fixedCell.setCellValue(totalFixed);
         fixedCell.setCellStyle(currencyStyle);

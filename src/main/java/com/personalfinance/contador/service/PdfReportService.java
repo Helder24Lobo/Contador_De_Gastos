@@ -8,7 +8,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.personalfinance.contador.model.Expenditure;
 import com.personalfinance.contador.model.FixedExpense;
 import com.personalfinance.contador.model.Income;
-import com.personalfinance.contador.model.Specifications;
 
 import java.awt.*;
 import java.io.FileOutputStream;
@@ -32,7 +31,7 @@ public class PdfReportService {
 
     public static void generateFinancialReport(String filePath, String title, LocalDate start, LocalDate end,
                                                List<Income> incomes, List<Expenditure> expenses,
-                                               List<FixedExpense> fixedExpenses, List<Specifications> budgets) throws IOException, DocumentException {
+                                               List<FixedExpense> fixedExpenses) throws IOException, DocumentException {
 
         Document document = new Document(PageSize.A4, 36, 36, 54, 54);
         PdfWriter.getInstance(document, new FileOutputStream(filePath));
@@ -55,7 +54,7 @@ public class PdfReportService {
         // 2. Summary Section (Net Balance)
         double totalIncomes = incomes.stream().mapToDouble(Income::getValor).sum();
         double totalExpenses = expenses.stream().mapToDouble(Expenditure::getValor).sum();
-        double totalFixed = fixedExpenses.stream().filter(g -> g.getEstado().equalsIgnoreCase("Activo")).mapToDouble(FixedExpense::getValor).sum();
+        double totalFixed = fixedExpenses.stream().mapToDouble(FixedExpense::getValor).sum();
         double netBalance = totalIncomes - totalExpenses - totalFixed;
 
         document.add(new Paragraph("RESUMEN GENERAL", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, COLOR_PRIMARY)));
